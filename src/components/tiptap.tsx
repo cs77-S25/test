@@ -21,18 +21,18 @@ const MenuBar = () => {
       <div className="control-group">
         <div className="button-group">
           <Button
-            onClick={() => editor.chain().focus().toggleBold().run()}
-            disabled={!editor.can().chain().focus().toggleBold().run()}
-            className={editor.isActive("bold") ? "is-active" : ""}
-          >
-            Bold
-          </Button>
-          <Button
             onClick={() => editor.chain().focus().toggleItalic().run()}
             disabled={!editor.can().chain().focus().toggleItalic().run()}
             className={editor.isActive("italic") ? "is-active" : ""}
           >
             Italic
+          </Button>
+          <Button
+            onClick={() => editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().chain().focus().toggleBold().run()}
+            className={editor.isActive("bold") ? "is-active" : ""}
+          >
+            Bold
           </Button>
           <Button
             onClick={() => editor.chain().focus().toggleStrike().run()}
