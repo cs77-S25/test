@@ -81,6 +81,12 @@ export const Navbar = (props: any) => {
                 />
               </div>
             </Link>
+            <div
+              className="text-2xl cursor-pointer"
+              onClick={() => router.push("/")}
+            >
+              Ascribe
+            </div>
           </NavbarBrand>
 
           <NavbarContent className="gap-4 flex-row hidden lg:flex">

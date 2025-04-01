@@ -9,8 +9,12 @@ export const siteConfig = {
       href: "/",
     },
     {
-      label: "Classes",
-      href: "/classes",
+      label: "My Boards",
+      href: "/board",
+    },
+    {
+      label: "Login",
+      href: "/login",
     },
   ],
   navMenuItems: [
