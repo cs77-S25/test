@@ -16,6 +16,24 @@ import { Button, Card, CardBody, CardHeader } from "@heroui/react";
 import { updateBoard } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 
+//Icons:
+import FormatItalicIcon from '@mui/icons-material/FormatItalic';
+import FormatBoldIcon from '@mui/icons-material/FormatBold';
+import StrikethroughSIcon from '@mui/icons-material/StrikethroughS';
+import CodeIcon from '@mui/icons-material/Code';
+import ClearAllIcon from '@mui/icons-material/ClearAll';
+import FormatClearIcon from '@mui/icons-material/FormatClear';
+import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR';
+
+//Fonts:
+import FontFamily from '@tiptap/extension-font-family';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+
+
+
+
 const extensions = [
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   //TextStyle.configure({ types: [ListItem.name] }),
@@ -63,42 +81,42 @@ export default (props: any) => {
               disabled={!editor.can().chain().focus().toggleItalic().run()}
               className={editor.isActive("italic") ? "is-active" : ""}
             >
-              Italic
+              <FormatItalicIcon></FormatItalicIcon>
             </Button>
             <Button
               onClick={() => editor.chain().focus().toggleBold().run()}
               disabled={!editor.can().chain().focus().toggleBold().run()}
               className={editor.isActive("bold") ? "is-active" : ""}
             >
-              Bold
+              <FormatBoldIcon></FormatBoldIcon>
             </Button>
             <Button
               onClick={() => editor.chain().focus().toggleStrike().run()}
               disabled={!editor.can().chain().focus().toggleStrike().run()}
               className={editor.isActive("strike") ? "is-active" : ""}
             >
-              Strike
+              <StrikethroughSIcon></StrikethroughSIcon>
             </Button>
             <Button
               onClick={() => editor.chain().focus().toggleCode().run()}
               disabled={!editor.can().chain().focus().toggleCode().run()}
               className={editor.isActive("code") ? "is-active" : ""}
             >
-              Code
+              <CodeIcon></CodeIcon>
             </Button>
             <Button
               onClick={() => editor.chain().focus().unsetAllMarks().run()}
             >
-              Clear marks
+              <ClearAllIcon></ClearAllIcon>
             </Button>
             <Button onClick={() => editor.chain().focus().clearNodes().run()}>
-              Clear nodes
+              <FormatClearIcon></FormatClearIcon>
             </Button>
             <Button
               onClick={() => editor.chain().focus().setParagraph().run()}
               className={editor.isActive("paragraph") ? "is-active" : ""}
             >
-              Paragraph
+              <FormatTextdirectionLToRIcon></FormatTextdirectionLToRIcon>
             </Button>
             <Button
               onClick={() =>
@@ -108,8 +126,17 @@ export default (props: any) => {
                 editor.isActive("heading", { level: 1 }) ? "is-active" : ""
               }
             >
-              H1
+              Header
             </Button>
+
+          <Button
+            onClick={() => editor.chain().focus().setFontFamily('serif').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
+            data-test-id="serif"
+          >
+            Serif
+          </Button>
+
             <Button
               onClick={() =>
                 editor.chain().focus().toggleHeading({ level: 2 }).run()
