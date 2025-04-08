@@ -23,15 +23,31 @@ model User {
   shared_boards Board[]  @relation("sharedboards")
   created_at    DateTime @default(now())
   boards        Board[]
+  docs          Docs[]   @relation("shareddocs")
+  Docs          Docs[]
+}
+
+model Docs {
+  id            Int      @id @default(autoincrement())
+  name          String
+  text          String?
+  shared        Boolean
+  owner         User     @relation(fields: [ownerid], references: [id])
+  ownerid        Int
+  shared_access User[]   @relation("shareddocs")
+  created_at    DateTime @default(now())
+  board         Board    @relation(fields: [boardid], references: [id])
+  boardid       Int
 }
 
 model Board {
   id            Int      @id @default(autoincrement())
   name          String
-  text          String
+  description   String?
   shared        Boolean
-  owner         User     @relation(fields: [owerid], references: [id])
-  owerid        Int
+  owner         User     @relation(fields: [ownerid], references: [id])
+  ownerid        Int
   shared_access User[]   @relation("sharedboards")
   created_at    DateTime @default(now())
+  docs          Docs[]
 }
