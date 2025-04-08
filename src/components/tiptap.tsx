@@ -26,10 +26,10 @@ import FormatClearIcon from '@mui/icons-material/FormatClear';
 import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR';
 
 //Fonts:
-import FontFamily from '@tiptap/extension-font-family';
-import Document from '@tiptap/extension-document';
-import Paragraph from '@tiptap/extension-paragraph';
-import Text from '@tiptap/extension-text';
+//import FontFamily from '@tiptap/extension-font-family';
+//import Document from '@tiptap/extension-document';
+//import Paragraph from '@tiptap/extension-paragraph';
+//import Text from '@tiptap/extension-text';
 
 
 
@@ -130,7 +130,7 @@ export default (props: any) => {
             </Button>
 
           <Button
-            onClick={() => editor.chain().focus().setFontFamily('serif').run()}
+            //onClick={() => editor.chain().focus().setFontFamily('serif').run()}
             className={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
             data-test-id="serif"
           >

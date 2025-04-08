@@ -14,7 +14,7 @@ import React, { useCallback, useEffect } from "react";
 import { getDocByID } from "@/app/actions/actions";
 import useSWR from "swr";
 import { Docs } from "@prisma/client";
-import Tiptap from "@/components/Tip";
+import Tiptap from "@/components/tiptap";
 
 export default function IndexPage({
   params,

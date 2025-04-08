@@ -34,8 +34,13 @@ export default function IndexPage() {
 
   return (
     <>
-      <div className="w-full h-[87vh] overflow-y-scroll  grid grid-cols-1 grid-rows-3 lg:pt-2 lg:pl-2 ">
-        <div className="w-full  row-span-1 p-5 grid grid-cols-6 gap-5">
+      <div className="w-full h-[87vh] overflow-y-scroll grid grid-cols-1 gap-5 grid-rows-3 lg:pt-2 lg:pl-2 ">
+        <Input
+          value={boardName}
+          onValueChange={setBoardName}
+          label="Name"
+        ></Input>
+        <div className="w-full row-span-1 p-5 grid grid-cols-6 gap-5 bg-slate-900">
           <Card
             isPressable
             isFooterBlurred
@@ -74,7 +79,7 @@ export default function IndexPage() {
             <CardFooter className="text-sm">Template 1</CardFooter>
           </Card>
         </div>
-        <div className="w-full bg-gray-800 row-span-2">
+        <div className="grid grid-cols-5 grid-rows-subgrid  row-span-2">
           {isLoading != true
             ? data?.map((board: Board) => (
                 <BoardCard key={board.id} board={board}></BoardCard>
