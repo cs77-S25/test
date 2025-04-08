@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Docs" ALTER COLUMN "text" DROP NOT NULL;

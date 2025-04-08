@@ -13,7 +13,7 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
 import { Button, Card, CardBody, CardHeader } from "@heroui/react";
-import { updateBoard } from "@/app/actions/actions";
+import { updateDoc } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 
 const extensions = [
@@ -43,7 +43,7 @@ export default (props: any) => {
   const [editorContent, setEditorContent] = React.useState("");
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
-    let updatedBoard = await updateBoard(props.id, content);
+    let updatedBoard = await updateDoc(props.id, content);
     console.log(updatedBoard);
   }, 100);
 
@@ -59,49 +59,49 @@ export default (props: any) => {
         <div className="control-group">
           <div className="button-group">
             <Button
-              onClick={() => editor.chain().focus().toggleItalic().run()}
+              onPress={() => editor.chain().focus().toggleItalic().run()}
               disabled={!editor.can().chain().focus().toggleItalic().run()}
               className={editor.isActive("italic") ? "is-active" : ""}
             >
               Italic
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleBold().run()}
+              onPress={() => editor.chain().focus().toggleBold().run()}
               disabled={!editor.can().chain().focus().toggleBold().run()}
               className={editor.isActive("bold") ? "is-active" : ""}
             >
               Bold
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleStrike().run()}
+              onPress={() => editor.chain().focus().toggleStrike().run()}
               disabled={!editor.can().chain().focus().toggleStrike().run()}
               className={editor.isActive("strike") ? "is-active" : ""}
             >
               Strike
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleCode().run()}
+              onPress={() => editor.chain().focus().toggleCode().run()}
               disabled={!editor.can().chain().focus().toggleCode().run()}
               className={editor.isActive("code") ? "is-active" : ""}
             >
               Code
             </Button>
             <Button
-              onClick={() => editor.chain().focus().unsetAllMarks().run()}
+              onPress={() => editor.chain().focus().unsetAllMarks().run()}
             >
               Clear marks
             </Button>
-            <Button onClick={() => editor.chain().focus().clearNodes().run()}>
+            <Button onPress={() => editor.chain().focus().clearNodes().run()}>
               Clear nodes
             </Button>
             <Button
-              onClick={() => editor.chain().focus().setParagraph().run()}
+              onPress={() => editor.chain().focus().setParagraph().run()}
               className={editor.isActive("paragraph") ? "is-active" : ""}
             >
               Paragraph
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 1 }).run()
               }
               className={
@@ -111,7 +111,7 @@ export default (props: any) => {
               H1
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 2 }).run()
               }
               className={
@@ -121,7 +121,7 @@ export default (props: any) => {
               H2
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 3 }).run()
               }
               className={
@@ -131,7 +131,7 @@ export default (props: any) => {
               H3
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 4 }).run()
               }
               className={
@@ -141,7 +141,7 @@ export default (props: any) => {
               H4
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 5 }).run()
               }
               className={
@@ -151,7 +151,7 @@ export default (props: any) => {
               H5
             </Button>
             <Button
-              onClick={() =>
+              onPress={() =>
                 editor.chain().focus().toggleHeading({ level: 6 }).run()
               }
               className={
@@ -161,51 +161,51 @@ export default (props: any) => {
               H6
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleBulletList().run()}
+              onPress={() => editor.chain().focus().toggleBulletList().run()}
               className={editor.isActive("bulletList") ? "is-active" : ""}
             >
               Bullet list
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleOrderedList().run()}
+              onPress={() => editor.chain().focus().toggleOrderedList().run()}
               className={editor.isActive("orderedList") ? "is-active" : ""}
             >
               Ordered list
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+              onPress={() => editor.chain().focus().toggleCodeBlock().run()}
               className={editor.isActive("codeBlock") ? "is-active" : ""}
             >
               Code block
             </Button>
             <Button
-              onClick={() => editor.chain().focus().toggleBlockquote().run()}
+              onPress={() => editor.chain().focus().toggleBlockquote().run()}
               className={editor.isActive("blockquote") ? "is-active" : ""}
             >
               Blockquote
             </Button>
             <Button
-              onClick={() => editor.chain().focus().setHorizontalRule().run()}
+              onPress={() => editor.chain().focus().setHorizontalRule().run()}
             >
               Horizontal rule
             </Button>
-            <Button onClick={() => editor.chain().focus().setHardBreak().run()}>
+            <Button onPress={() => editor.chain().focus().setHardBreak().run()}>
               Hard break
             </Button>
             <Button
-              onClick={() => editor.chain().focus().undo().run()}
+              onPress={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().chain().focus().undo().run()}
             >
               Undo
             </Button>
             <Button
-              onClick={() => editor.chain().focus().redo().run()}
+              onPress={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().chain().focus().redo().run()}
             >
               Redo
             </Button>
             <Button
-              onClick={() => editor.chain().focus().setColor("#958DF1").run()}
+              onPress={() => editor.chain().focus().setColor("#958DF1").run()}
               className={
                 editor.isActive("textStyle", { color: "#958DF1" })
                   ? "is-active"
