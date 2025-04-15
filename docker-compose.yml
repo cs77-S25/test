@@ -27,17 +27,12 @@ services:
         - "traefik.http.routers.ascribe.tls=true"
         - "traefik.http.routers.ascribe.tls.certresolver=letsEncrypt"
         - "traefik.http.services.ascribe.loadbalancer.server.port=3000"
-    ports:
-      - 3000:3000
     networks:
       - internal
     command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
 
   ascribe-db:
-    container_name: ascribe-db-dev
     image: postgres:16.4-bullseye
-    ports:
-      - 5432:5432
     environment:
       POSTGRES_PASSWORD: example
       POSTGRES_DB: ascribe_db
