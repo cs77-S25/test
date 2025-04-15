@@ -17,7 +17,7 @@ jobs:
       - uses: action-pack/gitlab-sync@v3
         with:
           # GitLab repo URL
-          url: https://gitlab.sccs.swarthmore.edu/sccs/ascribe.git
+          url: https://gitlab.sccs.swarthmore.edu/cs77-s25/ascribe.git
           # GitLab username
           username: mirrorbot
           # GitLab token
