@@ -53,7 +53,7 @@ export const Sidebar = (props: any) => {
                       className={`hover:text-orange-600 cursor-pointer ${
                         pathname == "/board/" + board.id
                           ? "text-orange-600"
-                          : "text-white"
+                          : "dark:text-white text-black"
                       }`}
                     >
                       {board.name}{" "}

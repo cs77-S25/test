@@ -84,6 +84,20 @@ export async function createBoard(name: any) {
   return board;
 }
 
+export async function deleteBoard(id: any) {
+  console.log(id);
+  if (id) {
+    const user = await prisma.user.findFirst();
+    if (user) {
+      await prisma.board.delete({
+        where: {
+          id: id,
+        },
+      });
+    }
+  }
+}
+
 export async function getBoards() {
   const boards = await prisma.board.findMany();
   return boards;

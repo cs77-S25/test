@@ -16,11 +16,21 @@ import useSWR from "swr";
 import { Board } from "@prisma/client";
 import AddIcon from "@mui/icons-material/Add";
 import NotesIcon from "@mui/icons-material/Notes";
-const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 111, 12, 13, 14, 15, 16];
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+} from "@heroui/modal";
+
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function IndexPage() {
   const [boardName, setBoardName] = React.useState("");
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   const { data, error, isLoading } = useSWR("/api/getboards", fetcher, {
     refreshInterval: 1000,
   });
@@ -29,35 +39,63 @@ export default function IndexPage() {
     if (boardName != "") {
       let newBoard = await createBoard(boardName);
       console.log(newBoard);
+      if (newBoard) {
+        setBoardName("");
+      }
     }
   }
 
   return (
     <>
-      <div className="w-full h-[87vh] overflow-y-scroll grid grid-cols-1 gap-5 grid-rows-3 lg:pt-2 lg:pl-2 ">
-        <Input
-          value={boardName}
-          onValueChange={setBoardName}
-          label="Name"
-        ></Input>
-        <div className="w-full row-span-1 p-5 grid grid-cols-6 gap-5 bg-slate-900">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                Create New Board
+              </ModalHeader>
+              <ModalBody>
+                <Input
+                  value={boardName}
+                  onValueChange={setBoardName}
+                  label="Name"
+                ></Input>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="danger" variant="light" onPress={onClose}>
+                  Cancel
+                </Button>
+                <Button
+                  color="primary"
+                  onPress={() => {
+                    onClose();
+                    newBoard();
+                  }}
+                >
+                  Create
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+      <div className="w-full h-[87vh] overflow-y-scroll lg:pt-2 lg:pl-2 ">
+        <div className="w-full row-span-1 p-5 grid grid-cols-6 gap-5 h-56 bg-slate-500 bg-opacity-15 rounded-lg">
           <Card
+            onPress={onOpen}
             isPressable
             isFooterBlurred
             className={
-              "dark:bg-slate-800 w-36 border-dashed bg-transparent border-gray-600 hover:scale-105 hover:z-50 h-full"
+              "dark:bg-slate-800 w-36  bg-transparent hover:scale-105 hover:z-50 h-full"
             }
           >
-            <CardBody
-              onClick={() => newBoard()}
-              className="justify-items-center w-full text-6xl "
-            >
+            <CardBody className="justify-items-center w-full text-6xl ">
               <AddIcon
                 fontSize="inherit"
                 className="ml-auto mr-auto mt-auto mb-auto "
               ></AddIcon>
             </CardBody>
-            <CardFooter className="text-sm">New Document</CardFooter>
+            <CardFooter className="text-sm">New Board</CardFooter>
           </Card>
 
           <Card
@@ -79,7 +117,7 @@ export default function IndexPage() {
             <CardFooter className="text-sm">Template 1</CardFooter>
           </Card>
         </div>
-        <div className="grid grid-cols-5 grid-rows-subgrid  row-span-2">
+        <div className=" overflow-y-scroll h-[55vh] grid grid-cols-6 gap-2 justify-items-center mt-5">
           {isLoading != true
             ? data?.map((board: Board) => (
                 <BoardCard key={board.id} board={board}></BoardCard>

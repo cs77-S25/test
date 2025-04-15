@@ -22,7 +22,7 @@ services:
       - 3000:3000
     networks:
       - internal
-    command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev "
+    command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
 
   ascribe-db-dev:
     container_name: ascribe-db-dev

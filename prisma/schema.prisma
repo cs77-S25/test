@@ -32,11 +32,11 @@ model Docs {
   name          String
   text          String?
   shared        Boolean
-  owner         User     @relation(fields: [ownerid], references: [id])
+  owner         User     @relation(fields: [ownerid], references: [id], onDelete: Cascade)
   ownerid        Int
   shared_access User[]   @relation("shareddocs")
   created_at    DateTime @default(now())
-  board         Board    @relation(fields: [boardid], references: [id])
+  board         Board    @relation(fields: [boardid], references: [id], onDelete: Cascade)
   boardid       Int
 }
 
