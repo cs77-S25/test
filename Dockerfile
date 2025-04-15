@@ -13,5 +13,5 @@ RUN chown -R node /usr/src/app
 USER node
 RUN npm install --production
 RUN npx prisma generate
-RUN DATABASE_URL=$DATABASE_URL npm run build
+RUN npm run build
 CMD ["npm", "start"]
