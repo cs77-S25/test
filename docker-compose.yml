@@ -1,6 +1,6 @@
 services:
   ascribe:
-    image: registry.sccs.swarthmore.edu/cs77-S25/ascribe/ascribe:latest
+    image: registry.sccs.swarthmore.edu/cs77-s25/ascribe/ascribe:latest
     build:
       context: .
       dockerfile: ./Dockerfile.dev
