@@ -1,6 +1,6 @@
 services:
-  ascribe-dev:
-    container_name: ascribe-dev
+  ascribe:
+    container_name: ascribe
     build:
       context: .
       dockerfile: ./Dockerfile.dev
