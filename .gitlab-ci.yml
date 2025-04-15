@@ -13,7 +13,8 @@ default:
 build:
   stage: build
   script:
-    - docker compose -f docker-compose.yml build $PROJECT_NAME:latest
+    - docker compose -f docker-compose.yml build $PROJECT_NAME
+    - docker tag $PROJECT_NAME $PROJECT_NAME:latest
     - docker push $SCCS_REGISTRY/cs77-s25/$PROJECT_NAME/$PROJECT_NAME:latest
 
 deploy_docker_stage:

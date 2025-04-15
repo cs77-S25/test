@@ -1,6 +1,6 @@
 services:
-  ascribe:
-    image: registry.sccs.swarthmore.edu/cs77-S25/ascribe/ascribe:latest
+  ascribe-dev:
+    container_name: ascribe-dev
     build:
       context: .
       dockerfile: ./Dockerfile.dev
@@ -14,7 +14,7 @@ services:
       NODE_ENV: development
       DOMAIN: http://127.0.0.1:3000/
       POSTGRES_DB: ascribe_db
-      DATABASE_URL: postgresql://postgres:example@ascribe-db:5432/ascribe_db
+      DATABASE_URL: postgresql://postgres:example@ascribe-db-dev:5432/ascribe_db
       #Due to docker networking we can reference the db by its container_name
     #env_file:
     #  - .env
@@ -24,7 +24,7 @@ services:
       - internal
     command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
 
-  ascribe-db:
+  ascribe-db-dev:
     container_name: ascribe-db-dev
     image: postgres:16.4-bullseye
     ports:
