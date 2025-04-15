@@ -18,6 +18,15 @@ services:
       #Due to docker networking we can reference the db by its container_name
     #env_file:
     #  - .env
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.ascribe.entrypoints=https"
+        - "traefik.http.routers.ascribe.rule=Host(`ascribe.sccs.swarthmore.edu`)"
+        - "traefik.http.routers.ascribe.tls=true"
+        - "traefik.http.routers.ascribe.tls.certresolver=letsEncrypt"
+        - "traefik.http.services.ascribe.loadbalancer.server.port=3000"
     ports:
       - 3000:3000
     networks:
