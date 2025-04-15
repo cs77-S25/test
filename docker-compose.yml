@@ -3,10 +3,7 @@ services:
     image: registry.sccs.swarthmore.edu/cs77-s25/ascribe/ascribe:latest
     build:
       context: .
-      dockerfile: ./Dockerfile.dev
-    volumes:
-      #Mapping your current dir to the container so your changes can reload in real time
-      - .:/usr/src/app
+      dockerfile: ./Dockerfile
     environment:
       #Variables we use in the container
       #Nonsensitive ones can go here for dev
