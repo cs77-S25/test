@@ -43,7 +43,9 @@ export default function RootLayout({
         >
           <Navbar />
           <main className="grid grid-cols-5 gap-5 container mx-auto lg:mx-0 px-1 lg:px-7 lg:pt-5 justify-center items-center flex-grow max-w-full">
-            <div className="col-start-1 absolute top-10 left-0 px-5 w-1/6">
+            <div className="dark:bg-sidebar_background col-start-1 absolute top-10 left-0 px-5 w-1/6"> {/* Okay, first, this has to be the weirdest comment syntax ever*/}
+            {/* Now, more importantly, this is the div that controls our sidebar column/colors. It is actually not in sidebar. Within sidebar seems to only control components
+            within the sidebar. Somehow, we need to figure out how to extend this column to the bottom of the screen with some padding so that it looks better. */}
               <Sidebar />
             </div>
             <div className="col-start-2 col-span-4  ">{children}</div>

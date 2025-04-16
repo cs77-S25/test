@@ -20,6 +20,8 @@ module.exports = {
           500: "#f46523" /* this is our accent */,
         },
       },
+      // I want to add some custom rules for column-rule aka column borders here so that we can have a visible border between
+      // the sidebar and the rest of the page, but I don't know how to properly code custom rules. My last attempt crashed the site
     },
   },
   darkMode: "class",
@@ -43,17 +45,18 @@ module.exports = {
         },
         dark: {
           colors: {
-            background: "#0C1019",
-            background_navbar: "#151D2B",
-            background_layer: "#2C2C33",
-            foreground: "#D9D9D9",
-            light_foreground: "#181C25",
+            background: "#061D23", // affects main section background, below navbar
+            background_navbar: "#2F232B", // obviously affects the navbar background
+            sidebar_background: "#2F232B", // affects the colors of the sidebar
+            background_layer: "#2C2C33", // seemingly affects nothing
+            foreground: "#D9D9D9", // affects text colors throughout the page
+            light_foreground: "#181C25", // no effect
             primary: {
-              DEFAULT: "#9FADBC",
-              foreground: "#1D2125",
+              DEFAULT: "#9FADBC", // no effect
+              foreground: "#1D2125", // no effect
             },
-            secondary: "#F46523",
-            focus: "#F46523",
+            secondary: "#77BA99", // for some reason, changes the coloring of the "HOME" txt in the navbar
+            focus: "#F46523", // also seems to have no effect
           },
         },
       },

@@ -117,7 +117,7 @@ export default function IndexPage() {
             <CardFooter className="text-sm">Template 1</CardFooter>
           </Card>
         </div>
-        <div className=" overflow-y-scroll h-[55vh] grid grid-cols-6 gap-2 justify-items-center mt-5">
+        <div className="overflow-y-scroll h-[55vh] grid grid-cols-6 gap-2 justify-items-center mt-5">
           {isLoading != true
             ? data?.map((board: Board) => (
                 <BoardCard key={board.id} board={board}></BoardCard>
