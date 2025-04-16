@@ -24,6 +24,11 @@ import CodeIcon from '@mui/icons-material/Code';
 import ClearAllIcon from '@mui/icons-material/ClearAll';
 import FormatClearIcon from '@mui/icons-material/FormatClear';
 import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import FormatListNumberedIcon from '@mui/icons-material/FormatListNumbered';
+import UndoIcon from '@mui/icons-material/Undo';
+import RedoIcon from '@mui/icons-material/Redo';
+import FormatQuoteIcon from '@mui/icons-material/FormatQuote';
 
 //Fonts:
 //import FontFamily from '@tiptap/extension-font-family';
@@ -147,91 +152,41 @@ export default (props: any) => {
             >
               H2
             </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 3 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 3 }) ? "is-active" : ""
-              }
-            >
-              H3
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 4 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 4 }) ? "is-active" : ""
-              }
-            >
-              H4
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 5 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 5 }) ? "is-active" : ""
-              }
-            >
-              H5
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 6 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 6 }) ? "is-active" : ""
-              }
-            >
-              H6
-            </Button>
+            
+            
             <Button
               onPress={() => editor.chain().focus().toggleBulletList().run()}
               className={editor.isActive("bulletList") ? "is-active" : ""}
             >
-              Bullet list
+              <FormatListBulletedIcon></FormatListBulletedIcon>
             </Button>
             <Button
               onPress={() => editor.chain().focus().toggleOrderedList().run()}
               className={editor.isActive("orderedList") ? "is-active" : ""}
             >
-              Ordered list
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleCodeBlock().run()}
-              className={editor.isActive("codeBlock") ? "is-active" : ""}
-            >
-              Code block
+              <FormatListNumberedIcon></FormatListNumberedIcon>
             </Button>
             <Button
               onPress={() => editor.chain().focus().toggleBlockquote().run()}
               className={editor.isActive("blockquote") ? "is-active" : ""}
             >
-              Blockquote
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().setHorizontalRule().run()}
-            >
-              Horizontal rule
-            </Button>
-            <Button onPress={() => editor.chain().focus().setHardBreak().run()}>
-              Hard break
+              <FormatQuoteIcon></FormatQuoteIcon>
             </Button>
             <Button
               onPress={() => editor.chain().focus().undo().run()}
               disabled={!editor.can().chain().focus().undo().run()}
             >
-              Undo
+              <UndoIcon></UndoIcon>
             </Button>
             <Button
+              
+              color = "warning"
               onPress={() => editor.chain().focus().redo().run()}
               disabled={!editor.can().chain().focus().redo().run()}
             >
-              Redo
+              <RedoIcon></RedoIcon>
             </Button>
-            <Button
+            {/* <Button
               onPress={() => editor.chain().focus().setColor("#958DF1").run()}
               className={
                 editor.isActive("textStyle", { color: "#958DF1" })
@@ -240,7 +195,7 @@ export default (props: any) => {
               }
             >
               Purple
-            </Button>
+            </Button> */}
           </div>
         </div>
       </CardHeader>
