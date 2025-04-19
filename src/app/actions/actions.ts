@@ -1,42 +1,71 @@
 "use server";
 
+import { Prisma } from "@prisma/client";
 import prisma from "../lib/prisma";
+import { auth } from "@/app/auth";
 
-export async function createUser(data: any) {
-  const user = await prisma.user.create({
-    data: {
-      email: data.email,
-      name: data.name,
-      username: data.username,
-      password: data.password,
-    },
-  });
-  return user;
+async function checkUser() {
+  const session = await auth();
+
+  if (session?.user) {
+    return session;
+  }
+}
+
+export async function checkUserExists(session: any) {
+  if (session?.user) {
+    console.log("authenticated Proceeding with User check...");
+    if (session?.user.email && session.user.name) {
+      let today = new Date();
+      const user = await prisma.user.upsert({
+        where: {
+          email: session.user.email || Prisma.skip,
+        },
+        update: {
+          lastLogin: today,
+          name: session?.user?.name || Prisma.skip,
+        },
+        create: {
+          email: session?.user?.email,
+          name: session?.user?.name,
+          lastLogin: today,
+          authType: "google",
+        },
+      });
+    }
+    console.log("error creating Local User");
+  }
 }
 
 export async function createDoc(name: any, boardId: Number | any) {
-  const user = await prisma.user.findFirst();
-  let board;
-  if (user) {
-    board = await prisma.docs.create({
-      data: {
-        shared: false,
-        text: "",
-        name: name,
-        board: {
-          connect: {
-            id: boardId,
-          },
-        },
-        owner: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
+  const session = await auth();
+  let doc;
+
+  if (session?.user && session?.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
     });
+    if (user) {
+      doc = await prisma.docs.create({
+        data: {
+          shared: false,
+          text: "",
+          name: name,
+          board: {
+            connect: {
+              id: boardId,
+            },
+          },
+          owner: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+    }
   }
-  return board;
+  return doc;
 }
 
 export async function updateDoc(id: any, content: string) {
@@ -53,8 +82,9 @@ export async function updateDoc(id: any, content: string) {
 }
 
 export async function getDocs() {
-  const boards = await prisma.docs.findMany();
-  return boards;
+  const docs = await prisma.docs.findMany();
+
+  return docs;
 }
 
 export async function getDocByID(id: number) {
@@ -64,43 +94,92 @@ export async function getDocByID(id: number) {
 
 // BOARDS #####################################################################
 
-export async function createBoard(name: any) {
-  const user = await prisma.user.findFirst();
-  let board;
-  if (user) {
-    board = await prisma.board.create({
-      data: {
-        shared: false,
-        name: name,
-        description: "",
-        owner: {
-          connect: {
-            id: user.id,
+export async function createBoard(name: any, description: string) {
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+    let board;
+    if (user) {
+      board = await prisma.board.create({
+        data: {
+          shared: false,
+          name: name,
+          description: description,
+          owner: {
+            connect: {
+              id: user.id,
+            },
           },
         },
-      },
-    });
+      });
+    }
+    return board;
   }
-  return board;
 }
 
 export async function deleteBoard(id: any) {
-  console.log(id);
   if (id) {
-    const user = await prisma.user.findFirst();
-    if (user) {
-      await prisma.board.delete({
-        where: {
-          id: id,
-        },
+    const session = await auth();
+
+    if (session?.user && session?.user.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
       });
+      if (user) {
+        await prisma.board.delete({
+          where: {
+            id: id,
+          },
+        });
+      }
     }
   }
 }
 
 export async function getBoards() {
-  const boards = await prisma.board.findMany();
+  const boards = await prisma.board.findMany({
+    include: {
+      docs: true,
+    },
+  });
   return boards;
+}
+
+export async function getUserInfo() {
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const boards = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+    });
+
+    return boards;
+  }
+}
+
+export async function updateSideBarOpen(things: Set<React.Key> | "all") {
+  let newSideBarOpen: string[] = [];
+  for (const thing of things) {
+    newSideBarOpen.push(thing.toString());
+  }
+
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const boards = await prisma.user.update({
+      where: {
+        email: session.user.email,
+      },
+      data: { sidebarOpen: newSideBarOpen },
+    });
+
+    return boards;
+  }
 }
 
 export async function getBoardByID(id: number) {

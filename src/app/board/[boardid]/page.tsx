@@ -15,6 +15,7 @@ import React, { useCallback, useEffect } from "react";
 import { createDoc, getBoardByID } from "@/app/actions/actions";
 import { Board, Docs } from "@prisma/client";
 import useSWR from "swr";
+import { useRouter } from "next/navigation";
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function IndexPage({
@@ -22,6 +23,7 @@ export default function IndexPage({
 }: {
   params: Promise<{ boardid: string }>;
 }) {
+  const router = useRouter();
   const [docName, setDocName] = React.useState("");
   const [board, setBoard] = React.useState<Board | null>();
   //const [documents, setDocuments] = React.useState<Docs[] | undefined>([]);
@@ -45,13 +47,15 @@ export default function IndexPage({
   async function newDocument() {
     if (docName != "") {
       let newDoc = await createDoc(docName, id);
-      console.log(newDoc);
+      if (newDoc) {
+        setDocName("");
+        router.refresh();
+      }
     }
   }
 
   useEffect(() => {
     getData();
-    console.log(board);
   }, [getData]);
 
   return (
@@ -82,7 +86,6 @@ export default function IndexPage({
         </Card>
         <Card
           isPressable
-          onPress={() => console.log("HELLOO")}
           className={
             "h-72 grid grid-rows-3 bg-transparent border-4 border-dashed border-gray-600 hover:scale-105 hover:z-50"
           }

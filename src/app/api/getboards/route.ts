@@ -2,18 +2,25 @@
 import { NextResponse, NextRequest } from "next/server";
 
 import prisma from "@/app/lib/prisma";
+import { auth } from "@/app/auth";
 
 export async function GET(request: NextRequest) {
-  const user = await prisma.user.findFirst();
-  console.log(user);
-  const boards = await prisma.board.findMany({
-    where: {
-      owner: {
-        id: user?.id,
-      },
-    },
-  });
+  let boards: any = [];
+  const session = await auth();
 
-  //console.log(plans);
+  if (session?.user && session.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    boards = await prisma.board.findMany({
+      where: {
+        owner: {
+          id: user?.id,
+        },
+      },
+    });
+  }
+
   return NextResponse.json(boards, { status: 200 });
 }

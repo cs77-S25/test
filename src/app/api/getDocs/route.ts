@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const boardID: any = (await searchParams.get("boardid")) || Prisma.skip;
 
   const user = await prisma.user.findFirst();
-  console.log(user);
+
   let boards;
 
   boards = await prisma.docs.findMany({
@@ -21,6 +21,5 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  //console.log(plans);
   return NextResponse.json(boards, { status: 200 });
 }

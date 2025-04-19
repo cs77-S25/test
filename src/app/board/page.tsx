@@ -24,11 +24,14 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@heroui/modal";
-
+import { useRouter } from "next/navigation";
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export default function IndexPage() {
+  const router = useRouter();
   const [boardName, setBoardName] = React.useState("");
+  const [desc, setDesc] = React.useState("");
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const { data, error, isLoading } = useSWR("/api/getboards", fetcher, {
@@ -37,10 +40,13 @@ export default function IndexPage() {
 
   async function newBoard() {
     if (boardName != "") {
-      let newBoard = await createBoard(boardName);
-      console.log(newBoard);
+      let newBoard = await createBoard(boardName, desc);
+
+      router.refresh();
+
       if (newBoard) {
         setBoardName("");
+        setDesc("");
       }
     }
   }
@@ -59,6 +65,11 @@ export default function IndexPage() {
                   value={boardName}
                   onValueChange={setBoardName}
                   label="Name"
+                ></Input>
+                <Input
+                  value={desc}
+                  onValueChange={setDesc}
+                  label="Description"
                 ></Input>
               </ModalBody>
               <ModalFooter>
