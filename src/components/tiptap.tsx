@@ -55,12 +55,12 @@ const extensions = [
 const editorProps = {
   attributes: {
     class:
-      "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[50vh] overflow-y-scroll",
+      "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[65vh]  overflow-y-scroll",
   },
 };
 
 export default (props: any) => {
-  const [editorContent, setEditorContent] = React.useState("");
+  const [editorContent, setEditorContent] = React.useState<any>("");
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
     let updatedBoard = await updateDoc(props.id, content);
@@ -74,110 +74,109 @@ export default (props: any) => {
     }
 
     return (
-      <CardHeader>
-        <div className="control-group">
-          <div className="button-group">
-            <ButtonGroup>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleItalic().run()}
-                disabled={!editor.can().chain().focus().toggleItalic().run()}
-                className={editor.isActive("italic") ? "is-active" : ""}
-              >
-                <FormatItalicIcon></FormatItalicIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleBold().run()}
-                disabled={!editor.can().chain().focus().toggleBold().run()}
-                className={editor.isActive("bold") ? "is-active" : ""}
-              >
-                <FormatBoldIcon></FormatBoldIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleStrike().run()}
-                disabled={!editor.can().chain().focus().toggleStrike().run()}
-                className={editor.isActive("strike") ? "is-active" : ""}
-              >
-                <StrikethroughSIcon></StrikethroughSIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleCode().run()}
-                disabled={!editor.can().chain().focus().toggleCode().run()}
-                className={editor.isActive("code") ? "is-active" : ""}
-              >
-                <CodeIcon></CodeIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().unsetAllMarks().run()}
-              >
-                <ClearAllIcon></ClearAllIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().clearNodes().run()}
-              >
-                <FormatClearIcon></FormatClearIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().setParagraph().run()}
-                className={editor.isActive("paragraph") ? "is-active" : ""}
-              >
-                <FormatTextdirectionLToRIcon></FormatTextdirectionLToRIcon>
-              </Button>
+      <>
+        <div>{props.name}</div>
+        <ButtonGroup>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleItalic().run()}
+            disabled={!editor.can().chain().focus().toggleItalic().run()}
+            className={editor.isActive("italic") ? "is-active" : ""}
+          >
+            <FormatItalicIcon></FormatItalicIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().chain().focus().toggleBold().run()}
+            className={editor.isActive("bold") ? "is-active" : ""}
+          >
+            <FormatBoldIcon></FormatBoldIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleStrike().run()}
+            disabled={!editor.can().chain().focus().toggleStrike().run()}
+            className={editor.isActive("strike") ? "is-active" : ""}
+          >
+            <StrikethroughSIcon></StrikethroughSIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleCode().run()}
+            disabled={!editor.can().chain().focus().toggleCode().run()}
+            className={editor.isActive("code") ? "is-active" : ""}
+          >
+            <CodeIcon></CodeIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().unsetAllMarks().run()}
+          >
+            <ClearAllIcon></ClearAllIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().clearNodes().run()}
+          >
+            <FormatClearIcon></FormatClearIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().setParagraph().run()}
+            className={editor.isActive("paragraph") ? "is-active" : ""}
+          >
+            <FormatTextdirectionLToRIcon></FormatTextdirectionLToRIcon>
+          </Button>
 
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleBulletList().run()}
-                className={editor.isActive("bulletList") ? "is-active" : ""}
-              >
-                <FormatListBulletedIcon></FormatListBulletedIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleOrderedList().run()}
-                className={editor.isActive("orderedList") ? "is-active" : ""}
-              >
-                <FormatListNumberedIcon></FormatListNumberedIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().toggleBlockquote().run()}
-                className={editor.isActive("blockquote") ? "is-active" : ""}
-              >
-                <FormatQuoteIcon></FormatQuoteIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().undo().run()}
-                disabled={!editor.can().chain().focus().undo().run()}
-              >
-                <UndoIcon></UndoIcon>
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() => editor.chain().focus().redo().run()}
-                disabled={!editor.can().chain().focus().redo().run()}
-              >
-                <RedoIcon></RedoIcon>
-              </Button>
-              {/* <Button
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleBulletList().run()}
+            className={editor.isActive("bulletList") ? "is-active" : ""}
+          >
+            <FormatListBulletedIcon></FormatListBulletedIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleOrderedList().run()}
+            className={editor.isActive("orderedList") ? "is-active" : ""}
+          >
+            <FormatListNumberedIcon></FormatListNumberedIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().toggleBlockquote().run()}
+            className={editor.isActive("blockquote") ? "is-active" : ""}
+          >
+            <FormatQuoteIcon></FormatQuoteIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().chain().focus().undo().run()}
+          >
+            <UndoIcon></UndoIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().chain().focus().redo().run()}
+          >
+            <RedoIcon></RedoIcon>
+          </Button>
+          {/* <Button
                 onPress={() => editor.chain().focus().setColor("#958DF1").run()}
                 className={
                   editor.isActive("textStyle", { color: "#958DF1" })
@@ -187,81 +186,82 @@ export default (props: any) => {
               >
                 Purple
               </Button> */}
-            </ButtonGroup>
-            <ButtonGroup>
-              <Button color="secondary" variant="bordered">
-                Size:
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() =>
-                  editor.chain().focus().toggleHeading({ level: 4 }).run()
-                }
-                className={
-                  editor.isActive("heading", { level: 4 }) ? "is-active" : ""
-                }
-              >
-                1
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() =>
-                  editor.chain().focus().toggleHeading({ level: 3 }).run()
-                }
-                className={
-                  editor.isActive("heading", { level: 3 }) ? "is-active" : ""
-                }
-              >
-                2
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() =>
-                  editor.chain().focus().toggleHeading({ level: 2 }).run()
-                }
-                className={
-                  editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-                }
-              >
-                3
-              </Button>
-              <Button
-                color="secondary"
-                variant="ghost"
-                onPress={() =>
-                  editor.chain().focus().toggleHeading({ level: 1 }).run()
-                }
-                className={
-                  editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-                }
-              >
-                4
-              </Button>
-            </ButtonGroup>
-          </div>
-        </div>
-      </CardHeader>
+        </ButtonGroup>
+        <ButtonGroup>
+          <Button color="secondary" variant="bordered">
+            Size:
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 4 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 4 }) ? "is-active" : ""
+            }
+          >
+            1
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 3 }) ? "is-active" : ""
+            }
+          >
+            2
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+            }
+          >
+            3
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+            }
+          >
+            4
+          </Button>
+        </ButtonGroup>
+      </>
     );
   };
 
   useEffect(() => {}, []);
 
   return (
-    <Card>
+    <>
       <EditorProvider
         immediatelyRender
         editorProps={editorProps}
-        slotBefore={<MenuBar />}
         extensions={extensions}
+        slotBefore={<MenuBar name={props.name} />}
         content={props.content}
+        editorContainerProps={{
+          className: "bg-neutral-900 rounded-md py-5 ",
+        }}
         onUpdate={({ editor }) => {
           UpdateBoard(editor.getHTML());
           setEditorContent(editor.getHTML());
         }}
       ></EditorProvider>
-    </Card>
+    </>
   );
 };

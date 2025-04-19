@@ -39,9 +39,12 @@ export default function IndexPage({
   return (
     <>
       <div className="w-full ">
-        <div className="text-center text-3xl mb-10">{document?.name}</div>
         {document != null ? (
-          <Tiptap content={document?.text} id={document.id} />
+          <Tiptap
+            content={document?.text}
+            id={document.id}
+            name={document?.name}
+          />
         ) : null}
       </div>
     </>
