@@ -10,6 +10,7 @@ import { getBoards, getUserInfo } from "./actions/actions";
 import { NextAuthProvider } from "../components/providers/NextAuthProvider";
 import { User } from "@prisma/client";
 import { auth } from "@/app/auth";
+import { theUser } from "@/lib/types";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -32,11 +33,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
-  let theBoards;
-  let userInfo: User | null | undefined;
+  let userInfo: theUser | null | undefined | any;
 
   if (session?.user) {
-    theBoards = await getBoards();
     userInfo = await getUserInfo();
   }
 
@@ -63,7 +62,7 @@ export default async function RootLayout({
                 {/* Okay, first, this has to be the weirdest comment syntax ever*/}
                 {/* Now, more importantly, this is the div that controls our sidebar column/colors. It is actually not in sidebar. Within sidebar seems to only control components
             within the sidebar. Somehow, we need to figure out how to extend this column to the bottom of the screen with some padding so that it looks better. */}
-                <Sidebar boards={theBoards} userInfo={userInfo} />
+                <Sidebar userInfo={userInfo} />
               </div>
               <div className="col-start-2 col-span-4  ">{children}</div>
             </main>

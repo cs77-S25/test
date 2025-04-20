@@ -156,6 +156,9 @@ export async function getUserInfo() {
       where: {
         email: session.user.email,
       },
+      include: {
+        boards: { include: { docs: true } },
+      },
     });
 
     return boards;

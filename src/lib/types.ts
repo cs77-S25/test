@@ -8,3 +8,14 @@ export type Board = {
   created_at: Date;
   docs: Docs[];
 };
+
+export type theUser = {
+  id: number;
+  name: string;
+  created_at: Date;
+  email: string;
+  authType: string;
+  lastLogin: Date | null;
+  sidebarOpen: string[];
+  boards: Board[];
+};
