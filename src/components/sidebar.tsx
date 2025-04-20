@@ -41,10 +41,6 @@ export const Sidebar = (props: {
     setSelectedKeys(props.userInfo?.sidebarOpen);
   }, []);
 
-  const { data, error, isLoading } = useSWR("/api/getboards", fetcher, {
-    refreshInterval: 1000,
-  });
-
   return (
     <div className="pt-10  overflow-y-scroll ">
       <Accordion

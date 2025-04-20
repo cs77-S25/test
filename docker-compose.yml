@@ -27,7 +27,7 @@ services:
     networks:
       - traefik
       - internal
-    command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
+    command: sh -c "sleep 5 && npx prisma migrate deploy && npm start"
 
   ascribe-db:
     image: postgres:16.4-bullseye
@@ -38,6 +38,11 @@ services:
       - internal
     volumes:
       - pg_data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready --dbname lists --username lists"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   pg_data:
