@@ -9,6 +9,7 @@ import {
   EditorProvider,
   useCurrentEditor,
   useEditor,
+  EditorContent,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
@@ -23,20 +24,42 @@ import StrikethroughSIcon from "@mui/icons-material/StrikethroughS";
 import CodeIcon from "@mui/icons-material/Code";
 import ClearAllIcon from "@mui/icons-material/ClearAll";
 import FormatClearIcon from "@mui/icons-material/FormatClear";
-import FormatTextdirectionLToRIcon from "@mui/icons-material/FormatTextdirectionLToR";
 import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 import UndoIcon from "@mui/icons-material/Undo";
 import RedoIcon from "@mui/icons-material/Redo";
 import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 
+
+// This allows font family to work
+import '@tiptap/core';
+
+declare module '@tiptap/core' {
+  interface Commands<ReturnType> {
+    fontFamily: {
+      setFontFamily: (font: string) => ReturnType;
+    };
+  }
+}
+
 //Fonts:
-//import FontFamily from '@tiptap/extension-font-family';
-//import Document from '@tiptap/extension-document';
-//import Paragraph from '@tiptap/extension-paragraph';
-//import Text from '@tiptap/extension-text';
+//import FontFamily from '@tiptap/extension-font-family'; //fonts are not working -----------------------Commented out - J
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Text from '@tiptap/extension-text';
+import ColorLensIcon from '@mui/icons-material/ColorLens';
+
+
+
 
 const extensions = [
+  Document,
+  Paragraph, 
+  Text, 
+  TextStyle,
+  Color,
+  //FontFamily, ------------------------------------------------------------ Commented Out - J
+
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   //TextStyle.configure({ types: [ListItem.name] }),
 
@@ -127,14 +150,6 @@ export default (props: any) => {
           >
             <FormatClearIcon></FormatClearIcon>
           </Button>
-          <Button
-            color="secondary"
-            variant="ghost"
-            onPress={() => editor.chain().focus().setParagraph().run()}
-            className={editor.isActive("paragraph") ? "is-active" : ""}
-          >
-            <FormatTextdirectionLToRIcon></FormatTextdirectionLToRIcon>
-          </Button>
 
           <Button
             color="secondary"
@@ -176,17 +191,22 @@ export default (props: any) => {
           >
             <RedoIcon></RedoIcon>
           </Button>
-          {/* <Button
-                onPress={() => editor.chain().focus().setColor("#958DF1").run()}
-                className={
-                  editor.isActive("textStyle", { color: "#958DF1" })
-                    ? "is-active"
-                    : ""
-                }
-              >
-                Purple
-              </Button> */}
+          <Button
+          color = "secondary"
+          variant = "ghost"
+          >
+        <ColorLensIcon></ColorLensIcon>
+        <input
+            type="color"
+            onInput={event => {
+            const input = event.target as HTMLInputElement;
+            editor.chain().focus().setColor(input.value).run()}} 
+            value={editor.getAttributes('textStyle').color}
+            data-testid="setColor"
+          />
+        </Button>
         </ButtonGroup>
+
         <ButtonGroup>
           <Button color="secondary" variant="bordered">
             Size:
@@ -239,6 +259,62 @@ export default (props: any) => {
           >
             4
           </Button>
+        </ButtonGroup>
+        
+        <ButtonGroup>
+        <button
+            onClick={() => editor.chain().focus().setFontFamily('Inter').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'Inter' }) ? 'is-active' : ''}
+            data-test-id="inter"
+          >
+            Inter
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('"Comic Sans MS", "Comic Sans"').run()}
+            className={
+              editor.isActive('textStyle', { fontFamily: '"Comic Sans MS", "Comic Sans"' })
+                ? 'is-active'
+                : ''
+            }
+            data-test-id="comic-sans"
+          >
+            Comic Sans
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('serif').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
+            data-test-id="serif"
+          >
+            Serif
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('monospace').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'monospace' }) ? 'is-active' : ''}
+            data-test-id="monospace"
+          >
+            Monospace
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('cursive').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'cursive' }) ? 'is-active' : ''}
+            data-test-id="cursive"
+          >
+            Cursive
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('var(--title-font-family)').run()}
+            className={editor.isActive('textStyle', { fontFamily: 'var(--title-font-family)' }) ? 'is-active' : ''}
+            data-test-id="css-variable"
+          >
+            CSS variable
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily('"Exo 2"').run()}
+            className={editor.isActive('textStyle', { fontFamily: '"Exo 2"' }) ? 'is-active' : ''}
+            data-test-id="exo2"
+          >
+            Exo 2
+          </button>
         </ButtonGroup>
       </>
     );
