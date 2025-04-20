@@ -28,12 +28,13 @@ services:
 
   ascribe-db:
     image: postgres:16.4-bullseye
+    restart: always
     env_file:
       - .env
     networks:
       - internal
     volumes:
-      - pg_data
+      - pg_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --dbname lists --username lists"]
       interval: 10s
