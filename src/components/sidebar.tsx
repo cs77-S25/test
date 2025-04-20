@@ -3,36 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { Accordion, AccordionItem, Link } from "@heroui/react";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import {
-  Card,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
 
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-  useDisclosure,
-} from "@heroui/react";
 import { usePathname } from "next/navigation";
 
 import useSWR from "swr";
-import { Board } from "@/lib/types";
+import { Board, theUser } from "@/lib/types";
 import { BoardCard } from "./board-card";
 import { getBoards, updateSideBarOpen } from "@/app/actions/actions";
 import { Docs, User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
-export const Sidebar = (props: {
-  boards: Board[] | undefined;
-  userInfo: User | null | undefined;
-}) => {
+export const Sidebar = (props: { userInfo: theUser | null | undefined }) => {
   const pathname = usePathname();
   const router = useRouter();
   const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
@@ -52,8 +34,8 @@ export const Sidebar = (props: {
           updateSideBarOpen(keys);
         }}
       >
-        {props.boards
-          ? props.boards?.map((board: Board) => (
+        {props.userInfo
+          ? props.userInfo.boards?.map((board: Board) => (
               <AccordionItem
                 key={board.id}
                 aria-label={board.name}
