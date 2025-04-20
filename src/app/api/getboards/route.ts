@@ -13,14 +13,15 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
-
-    boards = await prisma.board.findMany({
-      where: {
-        owner: {
-          id: user?.id,
+    if (user) {
+      boards = await prisma.board.findMany({
+        where: {
+          owner: {
+            id: user?.id,
+          },
         },
-      },
-    });
+      });
+    }
   }
 
   return NextResponse.json(boards, { status: 200 });

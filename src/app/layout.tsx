@@ -9,6 +9,7 @@ import { Sidebar } from "@/components/sidebar";
 import { getBoards, getUserInfo } from "./actions/actions";
 import { NextAuthProvider } from "../components/providers/NextAuthProvider";
 import { User } from "@prisma/client";
+import { auth } from "@/app/auth";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -30,8 +31,14 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const theBoards = await getBoards();
-  const userInfo: User | null | undefined = await getUserInfo();
+  const session = await auth();
+  let theBoards;
+  let userInfo: User | null | undefined;
+
+  if (session?.user) {
+    theBoards = await getBoards();
+    userInfo = await getUserInfo();
+  }
 
   return (
     <NextAuthProvider>

@@ -30,7 +30,7 @@ import { useRouter } from "next/navigation";
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export const Sidebar = (props: {
-  boards: Board[];
+  boards: Board[] | undefined;
   userInfo: User | null | undefined;
 }) => {
   const pathname = usePathname();
@@ -52,38 +52,40 @@ export const Sidebar = (props: {
           updateSideBarOpen(keys);
         }}
       >
-        {props.boards?.map((board: Board) => (
-          <AccordionItem
-            key={board.id}
-            aria-label={board.name}
-            title={board.name}
-            onPress={() => router.push(`/board/${board.id}`)}
-            classNames={{
-              title: ` cursor-pointer ${
-                pathname == "/board/" + board.id
-                  ? "text-secondary"
-                  : "dark:text-white text-black"
-              }`,
-            }}
-          >
-            <div className="list-desc ml-3 font-light grid grid-cols-1">
-              {board.docs?.map((doc: Docs) => (
-                <Link key={doc.id} href={`/document/${doc.id}`}>
-                  <li
-                    key={doc.id}
-                    className={`hover:text-secondary cursor-pointer ${
-                      pathname == "/document/" + doc.id
-                        ? "text-secondary"
-                        : "dark:text-white text-black"
-                    }`}
-                  >
-                    {doc.name}{" "}
-                  </li>
-                </Link>
-              ))}
-            </div>
-          </AccordionItem>
-        ))}
+        {props.boards
+          ? props.boards?.map((board: Board) => (
+              <AccordionItem
+                key={board.id}
+                aria-label={board.name}
+                title={board.name}
+                onPress={() => router.push(`/board/${board.id}`)}
+                classNames={{
+                  title: ` cursor-pointer ${
+                    pathname == "/board/" + board.id
+                      ? "text-secondary"
+                      : "dark:text-white text-black"
+                  }`,
+                }}
+              >
+                <div className="list-desc ml-3 font-light grid grid-cols-1">
+                  {board.docs?.map((doc: Docs) => (
+                    <Link key={doc.id} href={`/document/${doc.id}`}>
+                      <li
+                        key={doc.id}
+                        className={`hover:text-secondary cursor-pointer ${
+                          pathname == "/document/" + doc.id
+                            ? "text-secondary"
+                            : "dark:text-white text-black"
+                        }`}
+                      >
+                        {doc.name}{" "}
+                      </li>
+                    </Link>
+                  ))}
+                </div>
+              </AccordionItem>
+            ))
+          : null}
       </Accordion>
     </div>
   );

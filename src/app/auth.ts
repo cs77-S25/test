@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
-import { FirestoreAdapter } from "@auth/firebase-adapter";
+
 import GoogleProvider from "next-auth/providers/google";
 import Google from "next-auth/providers/google";
-import { cert } from "firebase-admin/app";
+
 import type {
   GetServerSidePropsContext,
   NextApiRequest,
