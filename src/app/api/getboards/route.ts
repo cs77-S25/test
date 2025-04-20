@@ -1,4 +1,5 @@
 // api/test.ts
+"use server";
 import { NextResponse, NextRequest } from "next/server";
 
 import prisma from "@/app/lib/prisma";
