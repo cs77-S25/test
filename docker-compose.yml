@@ -5,16 +5,13 @@ services:
       context: .
       dockerfile: ./Dockerfile
     environment:
-      #Variables we use in the container
-      #Nonsensitive ones can go here for dev
-      #For prod put in .env file
       NODE_ENV: production
       DOMAIN: https://ascribe.sccs.swarthmore.edu/
       POSTGRES_DB: ascribe_db
-      DATABASE_URL: postgresql://postgres:example@ascribe-db:5432/ascribe_db
-      #Due to docker networking we can reference the db by its container_name
     env_file:
       - .env
+    depends_on:
+      - ascribe-db
     deploy:
       labels:
         - "traefik.enable=true"
@@ -31,9 +28,8 @@ services:
 
   ascribe-db:
     image: postgres:16.4-bullseye
-    environment:
-      POSTGRES_PASSWORD: example
-      POSTGRES_DB: ascribe_db
+    env_file:
+      - .env
     networks:
       - internal
     volumes:
