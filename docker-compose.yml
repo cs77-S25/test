@@ -8,13 +8,13 @@ services:
       #Variables we use in the container
       #Nonsensitive ones can go here for dev
       #For prod put in .env file
-      NODE_ENV: development
-      DOMAIN: http://127.0.0.1:3000/
+      NODE_ENV: production
+      DOMAIN: https://ascribe.sccs.swarthmore.edu/
       POSTGRES_DB: ascribe_db
       DATABASE_URL: postgresql://postgres:example@ascribe-db:5432/ascribe_db
       #Due to docker networking we can reference the db by its container_name
-    #env_file:
-    #  - .env
+    env_file:
+      - .env
     deploy:
       labels:
         - "traefik.enable=true"
@@ -25,6 +25,7 @@ services:
         - "traefik.http.routers.ascribe.tls.certresolver=letsEncrypt"
         - "traefik.http.services.ascribe.loadbalancer.server.port=3000"
     networks:
+      - traefik
       - internal
     command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
 
