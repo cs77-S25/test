@@ -378,6 +378,9 @@ export default (props: any) => {
   const editor = useEditor({
     extensions: extensions,
     editorProps: editorProps,
+    injectCSS: true,
+    autofocus: true,
+
     onUpdate(props: any) {
       UpdateBoard(props.editor.getHTML());
       //setEditorContent(props.editor.getHTML());
@@ -400,7 +403,7 @@ export default (props: any) => {
         appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
         token: jwt,
         document: doc,
-        preserveConnection: false,
+        preserveConnection: true,
         // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
         onSynced(editor: any) {
           setEditorContent(props.content);
