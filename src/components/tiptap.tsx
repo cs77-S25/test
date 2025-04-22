@@ -98,16 +98,15 @@ export default (props: any) => {
         <ButtonGroup>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("italic") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleItalic().run()}
             disabled={!editor.can().chain().focus().toggleItalic().run()}
-            className={editor.isActive("italic") ? "is-active" : ""}
           >
             <FormatItalicIcon></FormatItalicIcon>
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("bold") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleBold().run()}
             disabled={!editor.can().chain().focus().toggleBold().run()}
             className={editor.isActive("bold") ? "is-active" : ""}
@@ -116,7 +115,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("strike") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleStrike().run()}
             disabled={!editor.can().chain().focus().toggleStrike().run()}
             className={editor.isActive("strike") ? "is-active" : ""}
@@ -125,7 +124,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("code") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleCode().run()}
             disabled={!editor.can().chain().focus().toggleCode().run()}
             className={editor.isActive("code") ? "is-active" : ""}
@@ -149,7 +148,7 @@ export default (props: any) => {
 
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("bulletList") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleBulletList().run()}
             className={editor.isActive("bulletList") ? "is-active" : ""}
           >
@@ -157,7 +156,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("orderedList") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleOrderedList().run()}
             className={editor.isActive("orderedList") ? "is-active" : ""}
           >
@@ -165,7 +164,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("blockquote") ? "solid" : "ghost"}
             onPress={() => editor.chain().focus().toggleBlockquote().run()}
             className={editor.isActive("blockquote") ? "is-active" : ""}
           >
@@ -219,7 +218,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
             onPress={() =>
               editor.chain().focus().toggleHeading({ level: 3 }).run()
             }
@@ -231,7 +230,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
             onPress={() =>
               editor.chain().focus().toggleHeading({ level: 2 }).run()
             }
@@ -243,7 +242,7 @@ export default (props: any) => {
           </Button>
           <Button
             color="secondary"
-            variant="ghost"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
             onPress={() =>
               editor.chain().focus().toggleHeading({ level: 1 }).run()
             }
