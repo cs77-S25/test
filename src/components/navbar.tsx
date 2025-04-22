@@ -84,7 +84,7 @@ export const Navbar = (props: any) => {
                 <Link
                   key={item.href}
                   color={pathname === item.href ? "secondary" : "foreground"}
-                  className="text-lg dark"
+                  className="text-lg dark text-hover-black"
                   href={item.href}
                 >
                   {item.label}

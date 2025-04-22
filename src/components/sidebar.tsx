@@ -29,7 +29,7 @@ export const Sidebar = (props: any) => {
   }, [props.userInfo]);
 
   return (
-    <div className="pt-10  overflow-y-scroll ">
+    <div className="pt-10 overflow-y-scroll ">
       <Accordion
         isCompact
         selectionMode="multiple"

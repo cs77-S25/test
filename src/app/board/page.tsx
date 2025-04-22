@@ -106,7 +106,7 @@ export default function IndexPage() {
       </Modal>
 
       <div className="grid grid-cols-5 gap-5">
-        <div className="dark:bg-sidebar_background col-start-1 absolute top-10 left-0 px-5 w-[15%] h-[95vh] shadow-lg shadow-black">
+        <div className="bg-sidebar_background col-start-1 absolute top-10 left-0 px-5 w-[15%] h-[95vh] shadow-lg shadow-black">
           {" "}
           {/* Okay, first, this has to be the weirdest comment syntax ever*/}
           {/* Now, more importantly, this is the div that controls our sidebar column/colors. It is actually not in sidebar. Within sidebar seems to only control components
