@@ -1,4 +1,4 @@
-import { Docs } from "@prisma/client";
+import { Docs, User } from "@prisma/client";
 export type Board = {
   name: string;
   id: number;
@@ -18,4 +18,15 @@ export type theUser = {
   lastLogin: Date | null;
   sidebarOpen: string[];
   boards: Board[];
+};
+
+export type theDocs = {
+  name: string;
+  id: number;
+  text: string | null;
+  shared: boolean;
+  created_at: Date;
+  boardid: number;
+  ownerid: number;
+  shared_access: User[];
 };

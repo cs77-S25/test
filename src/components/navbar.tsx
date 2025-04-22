@@ -30,7 +30,6 @@ import { siteConfig } from "../config/site";
 import { User } from "@heroui/react";
 import { useSession } from "next-auth/react";
 import { signIn, signOut } from "next-auth/react";
-import { checkUserExists } from "@/app/actions/actions";
 
 export const Navbar = (props: any) => {
   const router = useRouter();
@@ -129,11 +128,13 @@ export const Navbar = (props: any) => {
                 <User
                   isFocusable
                   className={"cursor-pointer transition-all"}
+                  /*
                   avatarProps={{
                     src: session.data?.user?.image || undefined,
                     fallback: null,
                     showFallback: true,
                   }}
+                    */
                   description={session.data?.user?.email}
                   name={session.data?.user?.name}
                 />
@@ -145,7 +146,14 @@ export const Navbar = (props: any) => {
               </DropdownMenu>
             </Dropdown>
           ) : (
-            <Button variant="bordered" onPress={() => signIn()}>
+            <Button
+              variant="bordered"
+              className="text-white"
+              onPress={() => signIn()}
+              startContent={
+                <Image src="./G.png" width="20" height="20"></Image>
+              }
+            >
               Sign In
             </Button>
           )}

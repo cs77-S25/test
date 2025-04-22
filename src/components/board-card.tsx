@@ -1,37 +1,147 @@
 "use client";
 
 import { Sidebar } from "@/components/sidebar";
-import { Card, CardHeader, CardBody, CardFooter, Button } from "@heroui/react";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+  ButtonGroup,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  User,
+  Skeleton,
+  Autocomplete,
+  AutocompleteSection,
+  AutocompleteItem,
+  Input,
+  DropdownSection,
+  ModalContent,
+  Modal,
+  ModalFooter,
+  ModalBody,
+  ModalHeader,
+  useDisclosure,
+} from "@heroui/react";
 import Link from "next/link";
 import { Router } from "next/router";
 import { useRouter } from "next/navigation";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { deleteBoard } from "@/app/actions/actions";
+import {
+  deleteBoard,
+  getAllUsers,
+  removeBoardShare,
+  setBoardShare,
+} from "@/app/actions/actions";
+import PersonAddAlt1Icon from "@mui/icons-material/PersonAddAlt1";
+import { useState, useMemo, useEffect } from "react";
+import { theUser } from "@/lib/types";
+import { User as UserType } from "@prisma/client";
+
 export const BoardCard = (props: any) => {
   const router = useRouter();
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set());
+  const [users, setUsers] = useState<UserType[] | undefined>();
+  const [selectedUsers, setSelectedUsers] = useState<any>();
+
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+  const selectedValue = useMemo(
+    () => Array.from(selectedKeys).join(", ").replaceAll("_", " "),
+    [selectedKeys]
+  );
+
+  async function getUsers() {
+    let theUsers: any = await getAllUsers();
+
+    let tempUsers = [];
+    for (const user of theUsers) {
+      let newUser = user;
+      newUser["key"] = user.name;
+
+      tempUsers.push(newUser);
+    }
+    console.log(tempUsers);
+    setUsers(tempUsers);
+  }
+
+  useEffect(() => {
+    let theSet = new Set();
+    for (const shared_user of props.board?.shared_access) {
+      theSet.add(shared_user.name);
+    }
+    setSelectedKeys(theSet);
+    console.log(theSet);
+    getUsers();
+  }, []);
+
   return (
     <Card
       isFooterBlurred
-      className={
-        "dark:bg-slate-800 w-36 h-44 border-dashed bg-transparent border-gray-600 hover:scale-105 hover:z-50 "
-      }
+      className={"dark:bg-slate-800 w-44 h-56 border-dashed  "}
     >
-      <CardHeader>{props.board?.name}</CardHeader>
-      <CardBody className="justify-items-center w-full text-sm ">
-        {props.board?.description}
-      </CardBody>
-      <CardFooter className="text-sm justify-between">
-        <Link href={`/board/${props.board?.id}`}>
-          <div>View</div>
-        </Link>
-        <div
-          onClick={() => {
-            deleteBoard(props.board?.id);
-            router.refresh();
-          }}
-        >
-          <DeleteIcon />
-        </div>
+      <Link
+        className="hover:cursor-pointer h-full"
+        href={`/board/${props.board?.id}`}
+      >
+        <CardHeader>{props.board?.name}</CardHeader>
+        <CardBody className="justify-items-center w-full text-sm ">
+          {props.board?.description.replace(/<\/?[^>]+(>|$)/g, "")}
+        </CardBody>
+      </Link>
+
+      <CardFooter className="text-sm justify-end">
+        <ButtonGroup>
+          <Dropdown closeOnSelect={false}>
+            <DropdownTrigger>
+              <Button isIconOnly>
+                <PersonAddAlt1Icon></PersonAddAlt1Icon>{" "}
+              </Button>
+            </DropdownTrigger>
+
+            <DropdownMenu
+              aria-label="Select users to share with"
+              closeOnSelect={false}
+              selectedKeys={selectedKeys}
+              selectionMode="multiple"
+              variant="flat"
+              onSelectionChange={setSelectedKeys}
+            >
+              <>
+                {users?.map((user: UserType) => (
+                  <DropdownItem key={user.name}>
+                    <User
+                      className="col-span-1"
+                      classNames={{
+                        name: "text-default-600",
+                        description: "text-default-500",
+                      }}
+                      description={user.email}
+                      name={user.name}
+                      onClick={() =>
+                        selectedKeys.has(user.name)
+                          ? setBoardShare(user, props.board?.id)
+                          : removeBoardShare(user, props.board?.id)
+                      }
+                    />
+                  </DropdownItem>
+                ))}
+              </>
+            </DropdownMenu>
+          </Dropdown>
+
+          <Button
+            isIconOnly
+            onPress={() => {
+              deleteBoard(props.board?.id);
+            }}
+          >
+            <DeleteIcon />
+          </Button>
+        </ButtonGroup>
       </CardFooter>
     </Card>
   );

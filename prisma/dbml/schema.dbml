@@ -1,0 +1,58 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id Int [pk, increment]
+  email String [unique, not null]
+  name String [not null]
+  created_at DateTime [default: `now()`, not null]
+  authType String [not null]
+  lastLogin DateTime
+  sidebarOpen String[] [not null]
+  boards Board [not null]
+  Docs Docs [not null]
+  shared_boards Board [not null]
+  docs Docs [not null]
+}
+
+Table Docs {
+  id Int [pk, increment]
+  name String [not null]
+  text String
+  shared Boolean [not null]
+  created_at DateTime [default: `now()`, not null]
+  boardid Int [not null]
+  ownerid Int [not null]
+  board Board [not null]
+  owner User [not null]
+  shared_access User [not null]
+}
+
+Table Board {
+  id Int [pk, increment]
+  name String [not null]
+  shared Boolean [not null]
+  created_at DateTime [default: `now()`, not null]
+  description String
+  ownerid Int [not null]
+  owner User [not null]
+  docs Docs [not null]
+  shared_access User [not null]
+}
+
+Table sharedboards {
+  shared_boardsId Int [ref: > Board.id]
+  shared_accessId Int [ref: > User.id]
+}
+
+Table shareddocs {
+  docsId Int [ref: > Docs.id]
+  shared_accessId Int [ref: > User.id]
+}
+
+Ref: Docs.boardid > Board.id [delete: Cascade]
+
+Ref: Docs.ownerid > User.id [delete: Cascade]
+
+Ref: Board.ownerid > User.id [delete: Cascade]

@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     });
     if (user) {
       boards = await prisma.board.findMany({
+        include: { shared_access: true },
         where: {
           owner: {
             id: user?.id,

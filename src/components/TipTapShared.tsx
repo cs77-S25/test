@@ -32,6 +32,7 @@ import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
 
 // This allows font family to work
 import "@tiptap/core";
+//Load env vars
 
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
@@ -48,28 +49,12 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 
-const extensions = [
-  Document,
-  Paragraph,
-  Text,
-  TextStyle,
-  Color,
-  //FontFamily, ------------------------------------------------------------ Commented Out - J
-
-  Color.configure({ types: [TextStyle.name, ListItem.name] }),
-  //TextStyle.configure({ types: [ListItem.name] }),
-
-  StarterKit.configure({
-    bulletList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-    orderedList: {
-      keepMarks: true,
-      keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
-    },
-  }),
-];
+import Collaboration from "@tiptap/extension-collaboration";
+import * as Y from "yjs";
+import { TiptapCollabProvider } from "@hocuspocus/provider";
+import { WebrtcProvider } from "y-webrtc";
+import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
+import { useSession } from "next-auth/react";
 
 const editorProps = {
   attributes: {
@@ -77,17 +62,73 @@ const editorProps = {
       "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[65vh]  overflow-y-scroll",
   },
 };
+const doc = new Y.Doc(); // Initialize Y.Doc for shared editing
+const provider = new WebrtcProvider(
+  "tiptap-collaboration-cursor-extension",
+  doc
+);
 
 export default (props: any) => {
+  const session = useSession();
+  const extensions = [
+    Document,
+    Paragraph,
+    Text,
+    TextStyle,
+    Color,
+    Collaboration.configure({
+      document: doc, // Configure Y.Doc for collaboration
+    }),
+    CollaborationCursor.configure({
+      provider,
+    }),
+    //FontFamily, ------------------------------------------------------------ Commented Out - J
+
+    Color.configure({ types: [TextStyle.name, ListItem.name] }),
+    //TextStyle.configure({ types: [ListItem.name] }),
+
+    StarterKit.configure({
+      history: false,
+      bulletList: {
+        keepMarks: true,
+        keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      },
+      orderedList: {
+        keepMarks: true,
+        keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+      },
+    }),
+  ];
+
   const [editorContent, setEditorContent] = React.useState<any>("");
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
     let updatedBoard = await updateDoc(props.id, content);
   }, 100);
 
-  const MenuBar = (props: any) => {
-    const { editor } = useCurrentEditor();
+  //const { editor } = useCurrentEditor();
 
+  // Connect to your Collaboration server
+  useEffect(() => {
+    const provider = new TiptapCollabProvider({
+      name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
+      appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
+      token: process.env.NEXT_PUBLIC_TOKEN, // Your JWT token
+      document: doc,
+      // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+      onSynced(editor: any) {
+        setEditorContent(props.content);
+        editor.commands.updateUser({
+          name: `${session?.data?.user?.name}`,
+          color: "#000000",
+          avatar: "https://unavatar.io/github/ueberdosis",
+        });
+      },
+    });
+  }, []);
+
+  const MenuBar = (props: any) => {
+    let editor = props.editor;
     if (!editor) {
       return null;
     }
@@ -360,7 +401,7 @@ export default (props: any) => {
     );
   };
 
-  useEffect(() => {}, []);
+  const { editor } = useCurrentEditor();
 
   return (
     <>
@@ -368,8 +409,8 @@ export default (props: any) => {
         immediatelyRender
         editorProps={editorProps}
         extensions={extensions}
-        slotBefore={<MenuBar name={props.name} />}
-        content={props.content}
+        slotBefore={<MenuBar name={props.name} editor={editor} />}
+        content={editorContent}
         editorContainerProps={{
           className: "bg-neutral-900 rounded-md py-5 ",
         }}
