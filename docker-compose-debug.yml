@@ -16,13 +16,38 @@ services:
       POSTGRES_DB: ascribe_db
       DATABASE_URL: postgresql://postgres:example@ascribe-db-dev:5432/ascribe_db
       #Due to docker networking we can reference the db by its container_name
-    #env_file:
-    #  - .env
+    env_file:
+      - .env.local
     ports:
       - 3000:3000
     networks:
       - internal
     command: sh -c "npm install --silent && npx prisma migrate dev --name init && npx prisma generate && npm run dev"
+
+  ascribe-dev-studio:
+    container_name: ascribe-dev-studio
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      #Mapping your current dir to the container so your changes can reload in real time
+      - .:/usr/src/app
+    environment:
+      #Variables we use in the container
+      #Nonsensitive ones can go here for dev
+      #For prod put in .env file
+      NODE_ENV: development
+      DOMAIN: http://127.0.0.1:3000/
+      POSTGRES_DB: ascribe_db
+      DATABASE_URL: postgresql://postgres:example@ascribe-db-dev:5432/ascribe_db
+      #Due to docker networking we can reference the db by its container_name
+    env_file:
+      - .env.local
+    ports:
+      - 5555:5555
+    networks:
+      - internal
+    command: sh -c "sleep 10 && npx prisma studio"
 
   ascribe-db-dev:
     container_name: ascribe-db-dev

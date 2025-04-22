@@ -17,16 +17,7 @@ export const siteConfig = {
       href: "/login",
     },
   ],
-  navMenuItems: [
-    {
-      label: "Plan",
-      href: "/",
-    },
-    {
-      label: "Calendar",
-      href: "/calendar",
-    },
-  ],
+
   links: {
     github: "https://github.com/nextui-org/nextui",
     twitter: "https://twitter.com/getnextui",

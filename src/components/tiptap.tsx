@@ -9,32 +9,53 @@ import {
   EditorProvider,
   useCurrentEditor,
   useEditor,
+  EditorContent,
 } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
-import { Button, Card, CardBody, CardHeader } from "@heroui/react";
+import { Button, Card, CardBody, CardHeader, ButtonGroup } from "@heroui/react";
 import { updateDoc } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 
 //Icons:
-import FormatItalicIcon from '@mui/icons-material/FormatItalic';
-import FormatBoldIcon from '@mui/icons-material/FormatBold';
-import StrikethroughSIcon from '@mui/icons-material/StrikethroughS';
-import CodeIcon from '@mui/icons-material/Code';
-import ClearAllIcon from '@mui/icons-material/ClearAll';
-import FormatClearIcon from '@mui/icons-material/FormatClear';
-import FormatTextdirectionLToRIcon from '@mui/icons-material/FormatTextdirectionLToR';
+import FormatItalicIcon from "@mui/icons-material/FormatItalic";
+import FormatBoldIcon from "@mui/icons-material/FormatBold";
+import StrikethroughSIcon from "@mui/icons-material/StrikethroughS";
+import CodeIcon from "@mui/icons-material/Code";
+import ClearAllIcon from "@mui/icons-material/ClearAll";
+import FormatClearIcon from "@mui/icons-material/FormatClear";
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import UndoIcon from "@mui/icons-material/Undo";
+import RedoIcon from "@mui/icons-material/Redo";
+import FormatQuoteIcon from "@mui/icons-material/FormatQuote";
+
+// This allows font family to work
+import "@tiptap/core";
+
+declare module "@tiptap/core" {
+  interface Commands<ReturnType> {
+    fontFamily: {
+      setFontFamily: (font: string) => ReturnType;
+    };
+  }
+}
 
 //Fonts:
-//import FontFamily from '@tiptap/extension-font-family';
-//import Document from '@tiptap/extension-document';
-//import Paragraph from '@tiptap/extension-paragraph';
-//import Text from '@tiptap/extension-text';
-
-
-
+//import FontFamily from '@tiptap/extension-font-family'; //fonts are not working -----------------------Commented out - J
+import Document from "@tiptap/extension-document";
+import Paragraph from "@tiptap/extension-paragraph";
+import Text from "@tiptap/extension-text";
+import ColorLensIcon from "@mui/icons-material/ColorLens";
 
 const extensions = [
+  Document,
+  Paragraph,
+  Text,
+  TextStyle,
+  Color,
+  //FontFamily, ------------------------------------------------------------ Commented Out - J
+
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   //TextStyle.configure({ types: [ListItem.name] }),
 
@@ -53,16 +74,15 @@ const extensions = [
 const editorProps = {
   attributes: {
     class:
-      "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[50vh] overflow-y-scroll",
+      "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[65vh]  overflow-y-scroll",
   },
 };
 
 export default (props: any) => {
-  const [editorContent, setEditorContent] = React.useState("");
+  const [editorContent, setEditorContent] = React.useState<any>("");
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
     let updatedBoard = await updateDoc(props.id, content);
-    console.log(updatedBoard);
   }, 100);
 
   const MenuBar = (props: any) => {
@@ -73,198 +93,290 @@ export default (props: any) => {
     }
 
     return (
-      <CardHeader>
-        <div className="control-group">
-          <div className="button-group">
-            <Button
-              onPress={() => editor.chain().focus().toggleItalic().run()}
-              disabled={!editor.can().chain().focus().toggleItalic().run()}
-              className={editor.isActive("italic") ? "is-active" : ""}
-            >
-              <FormatItalicIcon></FormatItalicIcon>
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleBold().run()}
-              disabled={!editor.can().chain().focus().toggleBold().run()}
-              className={editor.isActive("bold") ? "is-active" : ""}
-            >
-              <FormatBoldIcon></FormatBoldIcon>
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleStrike().run()}
-              disabled={!editor.can().chain().focus().toggleStrike().run()}
-              className={editor.isActive("strike") ? "is-active" : ""}
-            >
-              <StrikethroughSIcon></StrikethroughSIcon>
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleCode().run()}
-              disabled={!editor.can().chain().focus().toggleCode().run()}
-              className={editor.isActive("code") ? "is-active" : ""}
-            >
-              <CodeIcon></CodeIcon>
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().unsetAllMarks().run()}
-            >
-              <ClearAllIcon></ClearAllIcon>
-            </Button>
-            <Button onPress={() => editor.chain().focus().clearNodes().run()}>
-              <FormatClearIcon></FormatClearIcon>
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().setParagraph().run()}
-              className={editor.isActive("paragraph") ? "is-active" : ""}
-            >
-              <FormatTextdirectionLToRIcon></FormatTextdirectionLToRIcon>
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 1 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 1 }) ? "is-active" : ""
-              }
-            >
-              Header
-            </Button>
+      <>
+        <div>{props.name}</div>
+        <ButtonGroup>
+          <Button
+            color="secondary"
+            variant={editor.isActive("italic") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleItalic().run()}
+            disabled={!editor.can().chain().focus().toggleItalic().run()}
+          >
+            <FormatItalicIcon></FormatItalicIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("bold") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleBold().run()}
+            disabled={!editor.can().chain().focus().toggleBold().run()}
+            className={editor.isActive("bold") ? "is-active" : ""}
+          >
+            <FormatBoldIcon></FormatBoldIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("strike") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleStrike().run()}
+            disabled={!editor.can().chain().focus().toggleStrike().run()}
+            className={editor.isActive("strike") ? "is-active" : ""}
+          >
+            <StrikethroughSIcon></StrikethroughSIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("code") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleCode().run()}
+            disabled={!editor.can().chain().focus().toggleCode().run()}
+            className={editor.isActive("code") ? "is-active" : ""}
+          >
+            <CodeIcon></CodeIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().unsetAllMarks().run()}
+          >
+            <ClearAllIcon></ClearAllIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().clearNodes().run()}
+          >
+            <FormatClearIcon></FormatClearIcon>
+          </Button>
 
           <Button
-            //onClick={() => editor.chain().focus().setFontFamily('serif').run()}
-            className={editor.isActive('textStyle', { fontFamily: 'serif' }) ? 'is-active' : ''}
+            color="secondary"
+            variant={editor.isActive("bulletList") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleBulletList().run()}
+            className={editor.isActive("bulletList") ? "is-active" : ""}
+          >
+            <FormatListBulletedIcon></FormatListBulletedIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("orderedList") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleOrderedList().run()}
+            className={editor.isActive("orderedList") ? "is-active" : ""}
+          >
+            <FormatListNumberedIcon></FormatListNumberedIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("blockquote") ? "solid" : "ghost"}
+            onPress={() => editor.chain().focus().toggleBlockquote().run()}
+            className={editor.isActive("blockquote") ? "is-active" : ""}
+          >
+            <FormatQuoteIcon></FormatQuoteIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().undo().run()}
+            disabled={!editor.can().chain().focus().undo().run()}
+          >
+            <UndoIcon></UndoIcon>
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() => editor.chain().focus().redo().run()}
+            disabled={!editor.can().chain().focus().redo().run()}
+          >
+            <RedoIcon></RedoIcon>
+          </Button>
+          <Button color="secondary" variant="ghost">
+            <ColorLensIcon></ColorLensIcon>
+            <input
+              type="color"
+              onInput={(event) => {
+                const input = event.target as HTMLInputElement;
+                editor.chain().focus().setColor(input.value).run();
+              }}
+              value={editor.getAttributes("textStyle").color}
+              data-testid="setColor"
+            />
+          </Button>
+        </ButtonGroup>
+
+        <ButtonGroup>
+          <Button color="secondary" variant="bordered">
+            Size:
+          </Button>
+          <Button
+            color="secondary"
+            variant="ghost"
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 4 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 4 }) ? "is-active" : ""
+            }
+          >
+            1
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 3 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 3 }) ? "is-active" : ""
+            }
+          >
+            2
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 2 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 2 }) ? "is-active" : ""
+            }
+          >
+            3
+          </Button>
+          <Button
+            color="secondary"
+            variant={editor.isActive("heading") ? "solid" : "ghost"}
+            onPress={() =>
+              editor.chain().focus().toggleHeading({ level: 1 }).run()
+            }
+            className={
+              editor.isActive("heading", { level: 1 }) ? "is-active" : ""
+            }
+          >
+            4
+          </Button>
+        </ButtonGroup>
+
+        <ButtonGroup>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily("Inter").run()}
+            className={
+              editor.isActive("textStyle", { fontFamily: "Inter" })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="inter"
+          >
+            Inter
+          </button>
+          <button
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setFontFamily('"Comic Sans MS", "Comic Sans"')
+                .run()
+            }
+            className={
+              editor.isActive("textStyle", {
+                fontFamily: '"Comic Sans MS", "Comic Sans"',
+              })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="comic-sans"
+          >
+            Comic Sans
+          </button>
+          <button
+            onClick={() => editor.chain().focus().setFontFamily("serif").run()}
+            className={
+              editor.isActive("textStyle", { fontFamily: "serif" })
+                ? "is-active"
+                : ""
+            }
             data-test-id="serif"
           >
             Serif
-          </Button>
-
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 2 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 2 }) ? "is-active" : ""
-              }
-            >
-              H2
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 3 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 3 }) ? "is-active" : ""
-              }
-            >
-              H3
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 4 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 4 }) ? "is-active" : ""
-              }
-            >
-              H4
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 5 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 5 }) ? "is-active" : ""
-              }
-            >
-              H5
-            </Button>
-            <Button
-              onPress={() =>
-                editor.chain().focus().toggleHeading({ level: 6 }).run()
-              }
-              className={
-                editor.isActive("heading", { level: 6 }) ? "is-active" : ""
-              }
-            >
-              H6
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleBulletList().run()}
-              className={editor.isActive("bulletList") ? "is-active" : ""}
-            >
-              Bullet list
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleOrderedList().run()}
-              className={editor.isActive("orderedList") ? "is-active" : ""}
-            >
-              Ordered list
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleCodeBlock().run()}
-              className={editor.isActive("codeBlock") ? "is-active" : ""}
-            >
-              Code block
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().toggleBlockquote().run()}
-              className={editor.isActive("blockquote") ? "is-active" : ""}
-            >
-              Blockquote
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().setHorizontalRule().run()}
-            >
-              Horizontal rule
-            </Button>
-            <Button onPress={() => editor.chain().focus().setHardBreak().run()}>
-              Hard break
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().undo().run()}
-              disabled={!editor.can().chain().focus().undo().run()}
-            >
-              Undo
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().redo().run()}
-              disabled={!editor.can().chain().focus().redo().run()}
-            >
-              Redo
-            </Button>
-            <Button
-              onPress={() => editor.chain().focus().setColor("#958DF1").run()}
-              className={
-                editor.isActive("textStyle", { color: "#958DF1" })
-                  ? "is-active"
-                  : ""
-              }
-            >
-              Purple
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
+          </button>
+          <button
+            onClick={() =>
+              editor.chain().focus().setFontFamily("monospace").run()
+            }
+            className={
+              editor.isActive("textStyle", { fontFamily: "monospace" })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="monospace"
+          >
+            Monospace
+          </button>
+          <button
+            onClick={() =>
+              editor.chain().focus().setFontFamily("cursive").run()
+            }
+            className={
+              editor.isActive("textStyle", { fontFamily: "cursive" })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="cursive"
+          >
+            Cursive
+          </button>
+          <button
+            onClick={() =>
+              editor
+                .chain()
+                .focus()
+                .setFontFamily("var(--title-font-family)")
+                .run()
+            }
+            className={
+              editor.isActive("textStyle", {
+                fontFamily: "var(--title-font-family)",
+              })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="css-variable"
+          >
+            CSS variable
+          </button>
+          <button
+            onClick={() =>
+              editor.chain().focus().setFontFamily('"Exo 2"').run()
+            }
+            className={
+              editor.isActive("textStyle", { fontFamily: '"Exo 2"' })
+                ? "is-active"
+                : ""
+            }
+            data-test-id="exo2"
+          >
+            Exo 2
+          </button>
+        </ButtonGroup>
+      </>
     );
   };
 
-  useEffect(() => {
-    console.log(editorContent);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-    <Card>
+    <>
       <EditorProvider
         immediatelyRender
         editorProps={editorProps}
-        slotBefore={<MenuBar />}
         extensions={extensions}
+        slotBefore={<MenuBar name={props.name} />}
         content={props.content}
+        editorContainerProps={{
+          className: "bg-neutral-900 rounded-md py-5 ",
+        }}
         onUpdate={({ editor }) => {
-          console.log(editor.getHTML());
           UpdateBoard(editor.getHTML());
           setEditorContent(editor.getHTML());
         }}
       ></EditorProvider>
-    </Card>
+    </>
   );
 };

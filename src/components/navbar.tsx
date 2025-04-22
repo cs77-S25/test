@@ -21,32 +21,21 @@ import {
   DropdownItem,
 } from "@heroui/dropdown";
 import { Link } from "@heroui/link";
-import InputIcon from "@mui/icons-material/Input";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 import { usePathname } from "next/navigation";
 
 import { ThemeSwitch } from "./theme-switch";
 import { Button } from "@heroui/button";
 import { siteConfig } from "../config/site";
+import { User } from "@heroui/react";
+import { useSession } from "next-auth/react";
+import { signIn, signOut } from "next-auth/react";
 
 export const Navbar = (props: any) => {
   const router = useRouter();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  useEffect(() => {
-    if ("serviceWorker" in navigator) {
-      registerServiceWorker();
-    }
-  }, []);
-
-  async function registerServiceWorker() {
-    await navigator.serviceWorker.register("/sw.js", {
-      scope: "/",
-      updateViaCache: "all",
-    });
-  }
+  const session = useSession();
 
   useEffect(() => {
     setIsMenuOpen(false); // Close the navigation panel
@@ -58,7 +47,7 @@ export const Navbar = (props: any) => {
         classNames={{
           toggleIcon: ["text-white"],
         }}
-        className="bg-inherit lg:py-1"
+        className="bg-inherit lg:py-1 shadow-lg"
         maxWidth="full"
         position="sticky"
         isMenuOpen={isMenuOpen}
@@ -133,6 +122,41 @@ export const Navbar = (props: any) => {
           <NavbarItem className="hidden lg:flex gap-2">
             <ThemeSwitch />
           </NavbarItem>
+          {session.status == "authenticated" ? (
+            <Dropdown>
+              <DropdownTrigger>
+                <User
+                  isFocusable
+                  className={"cursor-pointer transition-all"}
+                  /*
+                  avatarProps={{
+                    src: session.data?.user?.image || undefined,
+                    fallback: null,
+                    showFallback: true,
+                  }}
+                    */
+                  description={session.data?.user?.email}
+                  name={session.data?.user?.name}
+                />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Sign out action">
+                <DropdownItem key="signout" onPress={() => signOut()}>
+                  Sign Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          ) : (
+            <Button
+              variant="bordered"
+              className="text-white"
+              onPress={() => signIn()}
+              startContent={
+                <Image src="./G.png" width="20" height="20"></Image>
+              }
+            >
+              Sign In
+            </Button>
+          )}
         </NavbarContent>
 
         {/* Mobile?*/}
@@ -179,7 +203,9 @@ export const Navbar = (props: any) => {
             ) : null}
              */}
           </div>
-          <NavbarItem className="justify-center text-center"></NavbarItem>
+          <NavbarItem className="justify-center text-center">
+            <Button onPress={() => signOut()}>Sign Out</Button>
+          </NavbarItem>
         </NavbarMenu>
       </NextUINavbar>
     </div>

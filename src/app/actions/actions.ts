@@ -1,42 +1,150 @@
 "use server";
 
+import { Prisma, User } from "@prisma/client";
 import prisma from "../lib/prisma";
+import { auth } from "@/app/auth";
+import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
+import jsonwebtoken from "jsonwebtoken";
 
-export async function createUser(data: any) {
-  const user = await prisma.user.create({
+export async function genJWT() {
+  const session = await auth();
+
+  if (session?.user && session.user?.email) {
+    const payload = {
+      // The payload contains claims like the user ID, which can be used to identify the user and their permissions.
+      sub: session.user?.email,
+    };
+    // The 'sign' method creates the JWT, with the payload and your secret key as inputs.
+    const jwt = jsonwebtoken.sign(payload, process.env.TIPTAP_APP_SECRET || "");
+    // The resulting JWT is used for authentication in API requests, ensuring secure access.
+    // Important: Never expose your secret key in client-side code!
+    return jwt;
+  }
+}
+
+export async function getAllUsers() {
+  const session = await auth();
+  let output = [];
+  if (session?.user) {
+    const users = await prisma.user.findMany({});
+    for (const user of users) {
+      if (user.email != session.user.email) {
+        output.push(user);
+      }
+    }
+
+    return output;
+  }
+}
+
+export async function setBoardShare(newUsers: User, boardId: any) {
+  let updatedBoard = await prisma.board.update({
+    where: {
+      id: boardId,
+    },
+    include: { shared_access: true, docs: true },
     data: {
-      email: data.email,
-      name: data.name,
-      username: data.username,
-      password: data.password,
+      shared_access: { connect: { id: newUsers.id } },
     },
   });
-  return user;
+
+  if (updatedBoard) {
+    for (const doc of updatedBoard.docs) {
+      let updatedDoc = await prisma.docs.update({
+        where: {
+          id: doc.id,
+        },
+        data: {
+          shared_access: { connect: { id: newUsers.id } },
+        },
+      });
+    }
+  }
+  console.log(updatedBoard);
+}
+
+export async function removeBoardShare(newUsers: User, boardId: any) {
+  console.log("REMOVE");
+  let updatedBoard = await prisma.board.update({
+    where: {
+      id: boardId,
+    },
+    include: { shared_access: true, docs: true },
+    data: {
+      shared_access: { disconnect: { id: newUsers.id } },
+    },
+  });
+  console.log(updatedBoard);
+
+  if (updatedBoard) {
+    for (const doc of updatedBoard.docs) {
+      let updatedDoc = await prisma.docs.update({
+        where: {
+          id: doc.id,
+        },
+        data: {
+          shared_access: { disconnect: { id: newUsers.id } },
+        },
+      });
+    }
+  }
+}
+
+export async function checkUserExists(session: any) {
+  if (session?.user) {
+    console.log("authenticated Proceeding with User check...");
+    if (session?.user.email && session.user.name) {
+      let today = new Date();
+      const user = await prisma.user.upsert({
+        where: {
+          email: session.user.email || Prisma.skip,
+        },
+        update: {
+          lastLogin: today,
+          name: session?.user?.name || Prisma.skip,
+        },
+        create: {
+          email: session?.user?.email,
+          name: session?.user?.name,
+          lastLogin: today,
+          authType: "google",
+        },
+      });
+    }
+    console.log("error creating Local User");
+  }
 }
 
 export async function createDoc(name: any, boardId: Number | any) {
-  const user = await prisma.user.findFirst();
-  let board;
-  if (user) {
-    board = await prisma.docs.create({
-      data: {
-        shared: false,
-        text: "",
-        name: name,
-        board: {
-          connect: {
-            id: boardId,
-          },
-        },
-        owner: {
-          connect: {
-            id: user.id,
-          },
-        },
-      },
+  const session = await auth();
+  let doc;
+
+  if (session?.user && session?.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
     });
+    if (user) {
+      doc = await prisma.docs.create({
+        data: {
+          shared: false,
+          text: "",
+          name: name,
+          board: {
+            connect: {
+              id: boardId,
+            },
+          },
+          owner: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
+    }
   }
-  return board;
+  return doc;
 }
 
 export async function updateDoc(id: any, content: string) {
@@ -53,54 +161,129 @@ export async function updateDoc(id: any, content: string) {
 }
 
 export async function getDocs() {
-  const boards = await prisma.docs.findMany();
-  return boards;
+  const docs = await prisma.docs.findMany();
+
+  return docs;
 }
 
 export async function getDocByID(id: number) {
-  const board = await prisma.docs.findUnique({ where: { id: id } });
+  const board = await prisma.docs.findUnique({
+    where: { id: id },
+    include: { shared_access: true },
+  });
   return board;
 }
 
 // BOARDS #####################################################################
 
-export async function createBoard(name: any) {
-  const user = await prisma.user.findFirst();
-  let board;
-  if (user) {
-    board = await prisma.board.create({
-      data: {
-        shared: false,
-        name: name,
-        description: "",
-        owner: {
-          connect: {
-            id: user.id,
+export async function createBoard(name: any, description: string) {
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+    let board;
+    if (user) {
+      board = await prisma.board.create({
+        data: {
+          shared: false,
+          name: name,
+          description: description,
+          owner: {
+            connect: {
+              id: user.id,
+            },
           },
         },
-      },
-    });
+      });
+    }
+    return board;
   }
-  return board;
 }
 
 export async function deleteBoard(id: any) {
-  console.log(id);
   if (id) {
-    const user = await prisma.user.findFirst();
-    if (user) {
-      await prisma.board.delete({
-        where: {
-          id: id,
-        },
+    const session = await auth();
+
+    if (session?.user && session?.user.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
       });
+      if (user) {
+        await prisma.board.delete({
+          where: {
+            id: id,
+          },
+        });
+      }
+    }
+  }
+}
+
+export async function deleteDoc(id: any) {
+  if (id) {
+    const session = await auth();
+
+    if (session?.user && session?.user.email) {
+      const user = await prisma.user.findUnique({
+        where: { email: session.user.email },
+      });
+      if (user) {
+        await prisma.docs.delete({
+          where: {
+            id: id,
+          },
+        });
+      }
     }
   }
 }
 
 export async function getBoards() {
-  const boards = await prisma.board.findMany();
+  const boards = await prisma.board.findMany({
+    include: {
+      docs: true,
+    },
+  });
   return boards;
+}
+
+export async function getUserInfo() {
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const boards = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
+      },
+      include: {
+        shared_boards: { include: { docs: true } },
+        boards: { include: { docs: true } },
+      },
+    });
+
+    return boards;
+  }
+}
+
+export async function updateSideBarOpen(things: Set<React.Key> | "all") {
+  let newSideBarOpen: string[] = [];
+  for (const thing of things) {
+    newSideBarOpen.push(thing.toString());
+  }
+  const session = await auth();
+
+  if (session?.user && session?.user.email) {
+    const boards = await prisma.user.update({
+      where: {
+        email: session.user.email,
+      },
+      data: { sidebarOpen: newSideBarOpen },
+    });
+
+    return boards;
+  }
 }
 
 export async function getBoardByID(id: number) {
@@ -111,4 +294,67 @@ export async function getBoardByID(id: number) {
     },
   });
   return board;
+}
+
+export async function calcStats(id: number | undefined) {
+  if (id) {
+    //Open ai, I ran out of credits apparently and had to switch to gemini?
+    //const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const client = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+    let response;
+    let response2;
+    let output: any = {};
+    const board = await prisma.board.findUnique({
+      where: { id: id },
+      include: {
+        docs: true,
+      },
+    });
+
+    let text = "";
+
+    if (board) {
+      for (const doc of board.docs) {
+        text = text + " " + doc.text?.replace(/<\/?[^>]+(>|$)/g, "");
+      }
+    }
+
+    if (text != "") {
+      response = await client.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: text,
+        config: {
+          systemInstruction: "Summarize the following text in 50 words.",
+        },
+      });
+      response2 = await client.models.generateContent({
+        model: "gemini-2.0-flash",
+        contents: text,
+        config: {
+          systemInstruction:
+            "Find the 10 most occuring words in the following text and reply with only those words, in descending order by frequency, separated by only a comma",
+        },
+      });
+      /* CHAT - if you have credits then go for it
+      response = await client.responses.create({
+        model: "gpt-4.1",
+        instructions: "Summarize the following text in 50 words. ",
+        input: text,
+      });
+      response2 = await client.responses.create({
+        model: "gpt-4.1",
+        instructions:
+          "Find the 10 most occuring words in the following text and reply with only those words, in descending order by frequency, separated by only a space",
+        input: text,
+      });
+      */
+      output["summary"] = response?.text;
+      output["cloud"] = response2?.text?.split(",");
+    }
+
+    console.log(output);
+
+    return output;
+  }
 }

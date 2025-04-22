@@ -15,6 +15,8 @@ import { getDocByID } from "@/app/actions/actions";
 import useSWR from "swr";
 import { Docs } from "@prisma/client";
 import Tiptap from "@/components/tiptap";
+import TipTapShared from "@/components/TipTapShared";
+import { theDocs } from "@/lib/types";
 
 export default function IndexPage({
   params,
@@ -22,7 +24,7 @@ export default function IndexPage({
   params: Promise<{ docid: string }>;
 }) {
   const [boardName, setBoardName] = React.useState("");
-  const [document, setDocument] = React.useState<Docs | null>();
+  const [document, setDocument] = React.useState<theDocs | null>();
   const [id, setID] = React.useState<Number | undefined>();
 
   const getData = useCallback(async () => {
@@ -39,9 +41,20 @@ export default function IndexPage({
   return (
     <>
       <div className="w-full ">
-        <div className="text-center text-3xl mb-10">{document?.name}</div>
         {document != null ? (
-          <Tiptap content={document?.text} id={document.id} />
+          document?.shared_access.length > 0 ? (
+            <TipTapShared
+              content={document?.text}
+              id={document.id}
+              name={document?.name}
+            ></TipTapShared>
+          ) : (
+            <Tiptap
+              content={document?.text}
+              id={document.id}
+              name={document?.name}
+            />
+          )
         ) : null}
       </div>
     </>

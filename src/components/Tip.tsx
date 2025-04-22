@@ -300,12 +300,9 @@ export default (props: any) => {
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
     let updatedBoard = await updateDoc(props.id, content);
-    console.log(updatedBoard);
   }, 100);
 
-  useEffect(() => {
-    console.log(editorContent);
-  }, []);
+  useEffect(() => {}, []);
 
   return (
     <Card>

@@ -1,6 +1,7 @@
 FROM node:lts-bullseye
-ARG DATABASE_URL
 ENV NODE_ENV=production
+ARG DATABASE_URL
+ENV DATABASE_URL=postgresql://postgres:example@ascribe-db:5432/ascribe_db
 
 RUN apt-get update
 RUN apt-get install -y vim netcat-openbsd
@@ -13,5 +14,5 @@ RUN chown -R node /usr/src/app
 USER node
 RUN npm install
 RUN npx prisma generate
-RUN npm run build
+RUN DATABASE_URL=$DATABASE_URL npm run build
 CMD ["npm", "start"]

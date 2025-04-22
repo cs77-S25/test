@@ -1,12 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearchPostgres", "relationJoins", "strictUndefinedChecks"]
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
 }
 
 datasource db {
@@ -15,16 +13,17 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
+  id            Int       @id @default(autoincrement())
+  email         String    @unique
   name          String
-  username      String   @unique
-  password      String
-  shared_boards Board[]  @relation("sharedboards")
-  created_at    DateTime @default(now())
+  created_at    DateTime  @default(now())
+  authType      String
+  lastLogin     DateTime?
+  sidebarOpen   String[]
   boards        Board[]
-  docs          Docs[]   @relation("shareddocs")
   Docs          Docs[]
+  shared_boards Board[]   @relation("sharedboards")
+  docs          Docs[]    @relation("shareddocs")
 }
 
 model Docs {
@@ -32,22 +31,22 @@ model Docs {
   name          String
   text          String?
   shared        Boolean
-  owner         User     @relation(fields: [ownerid], references: [id], onDelete: Cascade)
-  ownerid        Int
-  shared_access User[]   @relation("shareddocs")
   created_at    DateTime @default(now())
-  board         Board    @relation(fields: [boardid], references: [id], onDelete: Cascade)
   boardid       Int
+  ownerid       Int
+  board         Board    @relation(fields: [boardid], references: [id], onDelete: Cascade)
+  owner         User     @relation(fields: [ownerid], references: [id], onDelete: Cascade)
+  shared_access User[]   @relation("shareddocs")
 }
 
 model Board {
   id            Int      @id @default(autoincrement())
   name          String
-  description   String?
   shared        Boolean
-  owner         User     @relation(fields: [ownerid], references: [id])
-  ownerid        Int
-  shared_access User[]   @relation("sharedboards")
   created_at    DateTime @default(now())
+  description   String?
+  ownerid       Int
+  owner         User     @relation(fields: [ownerid], references: [id], onDelete: Cascade)
   docs          Docs[]
+  shared_access User[]   @relation("sharedboards")
 }

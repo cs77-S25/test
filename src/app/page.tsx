@@ -1,17 +1,28 @@
 "use client";
 
-import { Sidebar } from "@/components/sidebar";
 import { Button, Card, CardBody, CardFooter, CardHeader } from "@heroui/react";
-import { BoardCard } from "@/components/board-card";
-
-const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 111, 12, 13, 14, 15, 16];
+import Link from "next/link";
 
 export default function IndexPage() {
   return (
     <>
-
-    hihihi
-      <div className="w-full h-[87vh] overflow-y-scroll  grid grid-cols-5 gap-7 lg:pt-2 lg:pl-2 "></div>
+      <div className="ml-10 mt-5">
+        <div className="text-6xl ">Notes</div>
+        <div className="text-6xl ">done</div>
+        <div className="text-6xl ">collaboratively.</div>
+        <div className="mt-5 text-xl">
+          Ascribe helps you your classmates be more efficent with your
+          note-taking.
+        </div>
+        <div className="mt-10 gap-4">
+          <Link href="/board">
+            <Button color="secondary" variant="shadow">
+              Get Started
+            </Button>
+          </Link>
+          <Button className="ml-5">Contact Us</Button>
+        </div>
+      </div>
     </>
   );
 }

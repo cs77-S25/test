@@ -1,68 +1,163 @@
 "use client";
 //Just for pathname highlighting though, could always go back if it becomes too slow
-import React, { useEffect } from "react";
-import { Accordion, AccordionItem, Link } from "@heroui/react";
+import React, { useCallback, useEffect, useState } from "react";
+import { Accordion, AccordionItem, Divider, Link } from "@heroui/react";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import {
-  Card,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-} from "@heroui/react";
 
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerBody,
-  DrawerFooter,
-  Button,
-  useDisclosure,
-} from "@heroui/react";
 import { usePathname } from "next/navigation";
 
 import useSWR from "swr";
-import { Board } from "@prisma/client";
+import { Board, theUser } from "@/lib/types";
 import { BoardCard } from "./board-card";
-
+import {
+  getBoards,
+  getUserInfo,
+  updateSideBarOpen,
+} from "@/app/actions/actions";
+import { Docs, User } from "@prisma/client";
+import { useRouter } from "next/navigation";
+import { auth } from "@/app/auth";
 const fetcher = (url: any) => fetch(url).then((r) => r.json());
 
 export const Sidebar = (props: any) => {
   const pathname = usePathname();
+  const router = useRouter();
+  const [selectedKeys, setSelectedKeys] = useState<any>(new Set([]));
 
   useEffect(() => {
-    console.log(pathname);
-  }, []);
-  const defaultContent =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
-
-  const { data, error, isLoading } = useSWR("/api/getboards", fetcher, {
-    refreshInterval: 1000,
-  });
+    setSelectedKeys(props.userInfo?.sidebarOpen);
+  }, [props.userInfo]);
 
   return (
-    <div className="pt-10">
-      <Accordion isCompact selectionMode="multiple" defaultExpandedKeys={["1"]}>
-        <AccordionItem key="1" aria-label="CS77" title="CS77">
-          <div className="list-desc ml-3 font-light grid grid-cols-1">
-            {isLoading != true
-              ? data?.map((board: Board) => (
-                  <Link key={board.id} href={`/board/${board.id}`}>
-                    <li
-                      key={board.id}
-                      className={`hover:text-orange-600 cursor-pointer ${
-                        pathname == "/board/" + board.id
-                          ? "text-orange-600"
-                          : "dark:text-white text-black"
-                      }`}
-                    >
-                      {board.name}{" "}
-                    </li>
-                  </Link>
-                ))
-              : null}
-          </div>
-        </AccordionItem>
+    <div className="pt-10  overflow-y-scroll ">
+      <Accordion
+        isCompact
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={(keys: "all" | Set<React.Key>) => {
+          setSelectedKeys(keys);
+          updateSideBarOpen(keys);
+        }}
+      >
+        {props.userInfo
+          ? props.userInfo?.boards
+              ?.sort((a: any, b: any) => {
+                if (a.name < b.name) {
+                  return -1;
+                }
+                if (a.name > b.name) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((board: Board) => (
+                <AccordionItem
+                  key={board.id}
+                  aria-label={board.name}
+                  title={board.name}
+                  classNames={{
+                    title: ` cursor-pointer ${
+                      pathname == "/board/" + board.id
+                        ? "text-secondary"
+                        : "dark:text-white text-black"
+                    }`,
+                  }}
+                >
+                  <div className="list-desc ml-3 font-light grid grid-cols-1">
+                    {board.docs
+                      ?.sort((a: any, b: any) => {
+                        if (a.name < b.name) {
+                          return -1;
+                        }
+                        if (a.name > b.name) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                      .map((doc: Docs) => (
+                        <Link key={doc.id} href={`/document/${doc.id}`}>
+                          <li
+                            key={doc.id}
+                            className={`hover:text-secondary cursor-pointer ${
+                              pathname == "/document/" + doc.id
+                                ? "text-secondary"
+                                : "dark:text-white text-black"
+                            }`}
+                          >
+                            {doc.name}{" "}
+                          </li>
+                        </Link>
+                      ))}
+                  </div>
+                </AccordionItem>
+              ))
+          : null}
+      </Accordion>
+
+      <Divider className="mt-10" />
+      <div className="text-center text-xl mt-5">Shared Boards</div>
+      <Accordion
+        isCompact
+        selectionMode="multiple"
+        selectedKeys={selectedKeys}
+        onSelectionChange={(keys: "all" | Set<React.Key>) => {
+          setSelectedKeys(keys);
+          updateSideBarOpen(keys);
+        }}
+      >
+        {props.userInfo
+          ? props.userInfo?.shared_boards
+              ?.sort((a: any, b: any) => {
+                if (a.name < b.name) {
+                  return -1;
+                }
+                if (a.name > b.name) {
+                  return 1;
+                }
+                return 0;
+              })
+              .map((board: Board) => (
+                <AccordionItem
+                  key={board.id}
+                  aria-label={board.name}
+                  title={board.name}
+                  classNames={{
+                    title: ` cursor-pointer ${
+                      pathname == "/board/" + board.id
+                        ? "text-secondary"
+                        : "dark:text-white text-black"
+                    }`,
+                  }}
+                >
+                  <div className="list-desc ml-3 font-light grid grid-cols-1">
+                    {board.docs
+                      ?.sort((a: any, b: any) => {
+                        if (a.name < b.name) {
+                          return -1;
+                        }
+                        if (a.name > b.name) {
+                          return 1;
+                        }
+                        return 0;
+                      })
+                      .map((doc: Docs) => (
+                        <Link key={doc.id} href={`/document/${doc.id}`}>
+                          <li
+                            key={doc.id}
+                            className={`hover:text-secondary cursor-pointer ${
+                              pathname == "/document/" + doc.id
+                                ? "text-secondary"
+                                : "dark:text-white text-black"
+                            }`}
+                          >
+                            {doc.name}{" "}
+                          </li>
+                        </Link>
+                      ))}
+                  </div>
+                </AccordionItem>
+              ))
+          : null}
       </Accordion>
     </div>
   );
