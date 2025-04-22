@@ -14,7 +14,7 @@ import {
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect } from "react";
 import { Button, Card, CardBody, CardHeader, ButtonGroup } from "@heroui/react";
-import { updateDoc } from "@/app/actions/actions";
+import { genJWT, updateDoc } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 
 //Icons:
@@ -81,6 +81,10 @@ export default (props: any) => {
     }),
     CollaborationCursor.configure({
       provider,
+      user: {
+        name: `${session?.data?.user?.name}`,
+        color: "#77BA99",
+      },
     }),
     //FontFamily, ------------------------------------------------------------ Commented Out - J
 
@@ -110,21 +114,23 @@ export default (props: any) => {
 
   // Connect to your Collaboration server
   useEffect(() => {
-    const provider = new TiptapCollabProvider({
-      name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
-      appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
-      token: process.env.NEXT_PUBLIC_TOKEN, // Your JWT token
-      document: doc,
-      // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-      onSynced(editor: any) {
-        setEditorContent(props.content);
-        editor.commands.updateUser({
-          name: `${session?.data?.user?.name}`,
-          color: "#000000",
-          avatar: "https://unavatar.io/github/ueberdosis",
-        });
-      },
-    });
+    const fetchData = async () => {
+      let jwt = await genJWT();
+      const provider = new TiptapCollabProvider({
+        name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
+        appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
+        token: jwt,
+        document: doc,
+        preserveConnection: true,
+
+        // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+        onSynced(editor: any) {
+          setEditorContent(props.content);
+        },
+      });
+    };
+
+    fetchData(); // Call the async function
   }, []);
 
   const MenuBar = (props: any) => {

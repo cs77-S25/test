@@ -5,6 +5,23 @@ import prisma from "../lib/prisma";
 import { auth } from "@/app/auth";
 import OpenAI from "openai";
 import { GoogleGenAI } from "@google/genai";
+import jsonwebtoken from "jsonwebtoken";
+
+export async function genJWT() {
+  const session = await auth();
+
+  if (session?.user && session.user?.email) {
+    const payload = {
+      // The payload contains claims like the user ID, which can be used to identify the user and their permissions.
+      sub: session.user?.email,
+    };
+    // The 'sign' method creates the JWT, with the payload and your secret key as inputs.
+    const jwt = jsonwebtoken.sign(payload, process.env.TIPTAP_APP_SECRET || "");
+    // The resulting JWT is used for authentication in API requests, ensuring secure access.
+    // Important: Never expose your secret key in client-side code!
+    return jwt;
+  }
+}
 
 export async function getAllUsers() {
   const session = await auth();
