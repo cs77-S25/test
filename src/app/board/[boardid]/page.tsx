@@ -49,13 +49,6 @@ export default function IndexPage({
     }
   );
 
-  const getData = useCallback(async () => {
-    const slug = await decodeURIComponent((await params).boardid);
-    setID(parseInt(slug));
-    const theBoard = await getBoardByID(parseInt(slug));
-    setBoard(theBoard);
-  }, []);
-
   async function newDocument() {
     if (docName != "") {
       let newDoc = await createDoc(docName, id);
@@ -75,8 +68,15 @@ export default function IndexPage({
   }
 
   useEffect(() => {
+    async function getData() {
+      const slug = await params;
+      setID(parseInt(slug.boardid));
+      console.log(parseInt(slug.boardid));
+      const theBoard = await getBoardByID(parseInt(slug.boardid));
+      setBoard(theBoard);
+    }
     getData();
-  }, [getData]);
+  }, []);
 
   return (
     <>

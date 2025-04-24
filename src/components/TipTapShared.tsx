@@ -397,11 +397,7 @@ export default (props: any) => {
   });
 
   const extensions = [
-    Document,
-    Paragraph,
-    Text,
     TextStyle,
-    Color,
     Collaboration.configure({
       document: doc, // Configure Y.Doc for collaboration
     }),

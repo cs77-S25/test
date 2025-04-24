@@ -167,11 +167,14 @@ export async function getDocs() {
 }
 
 export async function getDocByID(id: number) {
-  const board = await prisma.docs.findUnique({
-    where: { id: id },
-    include: { shared_access: true },
-  });
-  return board;
+  if (id) {
+    const board = await prisma.docs.findUnique({
+      where: { id: id },
+      include: { shared_access: true },
+    });
+
+    return board;
+  }
 }
 
 // BOARDS #####################################################################

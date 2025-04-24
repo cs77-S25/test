@@ -8,7 +8,7 @@ import { auth } from "@/app/auth";
 export async function GET(request: NextRequest) {
   const { searchParams } = await new URL(request.url);
   const boardID: any = await searchParams.get("boardid");
-  let boards;
+  let boards: any = [];
 
   const session = await auth();
 
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
       where: { email: session.user.email },
     });
     if (user) {
-      if (boardID != undefined) {
+      if (boardID != "undefined") {
         boards = await prisma.docs.findMany({
           where: {
             boardid: parseInt(boardID),

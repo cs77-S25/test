@@ -23,8 +23,9 @@ export default async function IndexPage({
 }: {
   params: Promise<{ docid: string }>;
 }) {
-  const slug = await decodeURIComponent((await params).docid);
-  const document = await getDocByID(parseInt(slug));
+  const slug = await params;
+
+  const document = await getDocByID(parseInt(slug.docid));
   let jwt = await genJWT();
   const session = await auth();
 

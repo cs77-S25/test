@@ -49,11 +49,8 @@ import Text from "@tiptap/extension-text";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 
 const extensions = [
-  Document,
-  Paragraph,
-  Text,
   TextStyle,
-  Color,
+
   //FontFamily, ------------------------------------------------------------ Commented Out - J
 
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
@@ -255,8 +252,13 @@ export default (props: any) => {
         </ButtonGroup>
 
         <ButtonGroup>
-          <button
-            onClick={() => editor.chain().focus().setFontFamily("Inter").run()}
+          <Button
+            onPress={() => editor.chain().focus().setFontFamily("Inter").run()}
+            variant={
+              editor.isActive("textStyle", { fontFamily: "Inter" })
+                ? "solid"
+                : "ghost"
+            }
             className={
               editor.isActive("textStyle", { fontFamily: "Inter" })
                 ? "is-active"
@@ -265,9 +267,16 @@ export default (props: any) => {
             data-test-id="inter"
           >
             Inter
-          </button>
-          <button
-            onClick={() =>
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", {
+                fontFamily: '"Comic Sans MS", "Comic Sans"',
+              })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() =>
               editor
                 .chain()
                 .focus()
@@ -284,9 +293,14 @@ export default (props: any) => {
             data-test-id="comic-sans"
           >
             Comic Sans
-          </button>
-          <button
-            onClick={() => editor.chain().focus().setFontFamily("serif").run()}
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", { fontFamily: "serif" })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() => editor.chain().focus().setFontFamily("serif").run()}
             className={
               editor.isActive("textStyle", { fontFamily: "serif" })
                 ? "is-active"
@@ -295,9 +309,14 @@ export default (props: any) => {
             data-test-id="serif"
           >
             Serif
-          </button>
-          <button
-            onClick={() =>
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", { fontFamily: "monospace" })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() =>
               editor.chain().focus().setFontFamily("monospace").run()
             }
             className={
@@ -308,9 +327,14 @@ export default (props: any) => {
             data-test-id="monospace"
           >
             Monospace
-          </button>
-          <button
-            onClick={() =>
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", { fontFamily: "cursive" })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() =>
               editor.chain().focus().setFontFamily("cursive").run()
             }
             className={
@@ -321,9 +345,16 @@ export default (props: any) => {
             data-test-id="cursive"
           >
             Cursive
-          </button>
-          <button
-            onClick={() =>
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", {
+                fontFamily: "var(--title-font-family)",
+              })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() =>
               editor
                 .chain()
                 .focus()
@@ -340,9 +371,14 @@ export default (props: any) => {
             data-test-id="css-variable"
           >
             CSS variable
-          </button>
-          <button
-            onClick={() =>
+          </Button>
+          <Button
+            variant={
+              editor.isActive("textStyle", { fontFamily: '"Exo 2"' })
+                ? "solid"
+                : "ghost"
+            }
+            onPress={() =>
               editor.chain().focus().setFontFamily('"Exo 2"').run()
             }
             className={
@@ -353,7 +389,7 @@ export default (props: any) => {
             data-test-id="exo2"
           >
             Exo 2
-          </button>
+          </Button>
         </ButtonGroup>
       </>
     );

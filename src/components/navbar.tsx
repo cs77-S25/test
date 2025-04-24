@@ -63,7 +63,7 @@ export const Navbar = (props: any) => {
             >
               <div>
                 <Image
-                  src="ascribe.png"
+                  src="/ascribe.png"
                   width="50"
                   height="50"
                   className="h-9 lg:h-12"
@@ -150,9 +150,7 @@ export const Navbar = (props: any) => {
               variant="bordered"
               className="text-white"
               onPress={() => signIn()}
-              startContent={
-                <Image src="./G.png" width="20" height="20"></Image>
-              }
+              startContent={<Image src="/G.png" width="20" height="20"></Image>}
             >
               Sign In
             </Button>
