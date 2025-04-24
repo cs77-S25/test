@@ -6,7 +6,7 @@ import Link from "next/link";
 export default function IndexPage() {
   return (
     <>
-      <div className="ml-10 mt-5">
+      <div className="ml-10 mt-5 animation-appear ">
         <div className="text-6xl ">Notes</div>
         <div className="text-6xl ">done</div>
         <div className="text-6xl ">collaboratively.</div>

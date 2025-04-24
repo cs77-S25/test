@@ -1,8 +1,7 @@
 FROM node:lts-bullseye
 ENV NODE_ENV=production
 ARG DATABASE_URL
-ENV DATABASE_URL=postgresql://postgres:example@ascribe-db:5432/ascribe_db
-
+ENV DATABASE_URL=postgresql://postgres:example@ascribe-db:5432/ascribe
 RUN apt-get update
 RUN apt-get install -y vim netcat-openbsd
 

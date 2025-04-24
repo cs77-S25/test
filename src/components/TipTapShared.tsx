@@ -54,6 +54,7 @@ import * as Y from "yjs";
 import { TiptapCollabProvider } from "@hocuspocus/provider";
 import { WebrtcProvider } from "y-webrtc";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
+import FontFamily from "@tiptap/extension-font-family";
 
 import { useSession } from "next-auth/react";
 
@@ -64,10 +65,13 @@ const editorProps = {
   },
 };
 const doc = new Y.Doc(); // Initialize Y.Doc for shared editing
+
+/*
 const provider = new WebrtcProvider(
   "tiptap-collaboration-cursor-extension",
   doc
 );
+*/
 
 const MenuBar = (props: { name: string; editor: any }) => {
   if (!props.editor) {
@@ -239,8 +243,13 @@ const MenuBar = (props: { name: string; editor: any }) => {
       </ButtonGroup>
 
       <ButtonGroup>
-        <button
-          onClick={() => editor.chain().focus().setFontFamily("Inter").run()}
+        <Button
+          onPress={() => editor.chain().focus().setFontFamily("Inter").run()}
+          variant={
+            editor.isActive("textStyle", { fontFamily: "Inter" })
+              ? "solid"
+              : "ghost"
+          }
           className={
             editor.isActive("textStyle", { fontFamily: "Inter" })
               ? "is-active"
@@ -249,9 +258,16 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="inter"
         >
           Inter
-        </button>
-        <button
-          onClick={() =>
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", {
+              fontFamily: '"Comic Sans MS", "Comic Sans"',
+            })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() =>
             editor
               .chain()
               .focus()
@@ -268,9 +284,14 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="comic-sans"
         >
           Comic Sans
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setFontFamily("serif").run()}
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", { fontFamily: "serif" })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() => editor.chain().focus().setFontFamily("serif").run()}
           className={
             editor.isActive("textStyle", { fontFamily: "serif" })
               ? "is-active"
@@ -279,9 +300,14 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="serif"
         >
           Serif
-        </button>
-        <button
-          onClick={() =>
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", { fontFamily: "monospace" })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() =>
             editor.chain().focus().setFontFamily("monospace").run()
           }
           className={
@@ -292,9 +318,14 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="monospace"
         >
           Monospace
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setFontFamily("cursive").run()}
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", { fontFamily: "cursive" })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() => editor.chain().focus().setFontFamily("cursive").run()}
           className={
             editor.isActive("textStyle", { fontFamily: "cursive" })
               ? "is-active"
@@ -303,9 +334,16 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="cursive"
         >
           Cursive
-        </button>
-        <button
-          onClick={() =>
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", {
+              fontFamily: "var(--title-font-family)",
+            })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() =>
             editor
               .chain()
               .focus()
@@ -322,9 +360,14 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="css-variable"
         >
           CSS variable
-        </button>
-        <button
-          onClick={() => editor.chain().focus().setFontFamily('"Exo 2"').run()}
+        </Button>
+        <Button
+          variant={
+            editor.isActive("textStyle", { fontFamily: '"Exo 2"' })
+              ? "solid"
+              : "ghost"
+          }
+          onPress={() => editor.chain().focus().setFontFamily('"Exo 2"').run()}
           className={
             editor.isActive("textStyle", { fontFamily: '"Exo 2"' })
               ? "is-active"
@@ -333,14 +376,25 @@ const MenuBar = (props: { name: string; editor: any }) => {
           data-test-id="exo2"
         >
           Exo 2
-        </button>
+        </Button>
       </ButtonGroup>
     </>
   );
 };
 
 export default (props: any) => {
-  const session = useSession();
+  let provider = new TiptapCollabProvider({
+    name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
+    appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
+    token: props.jwt,
+    document: doc,
+    preserveConnection: true,
+    user: `${props.session?.user?.name}`,
+    // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
+    onSynced(editor: any) {
+      setEditorContent(props.content);
+    },
+  });
 
   const extensions = [
     Document,
@@ -354,12 +408,12 @@ export default (props: any) => {
     CollaborationCursor.configure({
       provider,
       user: {
-        name: `${session?.data?.user?.name}`,
+        name: `${props.session.user?.name}`,
         color: "#77BA99",
       },
     }),
 
-    //FontFamily, ------------------------------------------------------------ Commented Out - J
+    FontFamily,
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
     //TextStyle.configure({ types: [ListItem.name] }),
 
@@ -393,27 +447,6 @@ export default (props: any) => {
     let updatedBoard = await updateDoc(props.id, content);
   }, 100);
 
-  // Connect to your Collaboration server
-  useEffect(() => {
-    console.log("DOING SHIT");
-    const fetchData = async () => {
-      let jwt = await genJWT();
-      const provider = new TiptapCollabProvider({
-        name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
-        appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
-        token: jwt,
-        document: doc,
-        preserveConnection: true,
-        // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
-        onSynced(editor: any) {
-          setEditorContent(props.content);
-        },
-      });
-    };
-
-    fetchData(); // Call the async function
-  }, []);
-
   return (
     <>
       <MenuBar name={props.name} editor={editor} />
@@ -422,23 +455,6 @@ export default (props: any) => {
         className={"bg-neutral-900 rounded-md py-5 "}
         editor={editor}
       />
-
-      {/*
-      <EditorProvider
-        immediatelyRender
-        editorProps={editorProps}
-        extensions={extensions}
-        slotBefore={<MenuBar name={props.name} />}
-        content={editorContent}
-        editorContainerProps={{
-          className: "bg-neutral-900 rounded-md py-5 ",
-        }}
-        onUpdate={({ editor }) => {
-          UpdateBoard(editor.getHTML());
-          setEditorContent(editor.getHTML());
-        }}
-      ></EditorProvider>
-      */}
     </>
   );
 };
