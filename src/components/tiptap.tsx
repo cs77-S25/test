@@ -395,8 +395,6 @@ export default (props: any) => {
     );
   };
 
-  useEffect(() => {}, []);
-
   return (
     <>
       <EditorProvider
@@ -410,7 +408,7 @@ export default (props: any) => {
         }}
         onUpdate={({ editor }) => {
           UpdateBoard(editor.getHTML());
-          setEditorContent(editor.getHTML());
+          //setEditorContent(editor.getHTML()); //I think this does it twice so we don't need it?
         }}
       ></EditorProvider>
     </>

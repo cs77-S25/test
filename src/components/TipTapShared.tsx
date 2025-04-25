@@ -4,16 +4,17 @@ import "@/styles/tiptap.css";
 import { Color } from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import {
-  EditorProvider,
-  useCurrentEditor,
-  useEditor,
-  EditorContent,
-  FloatingMenu,
-} from "@tiptap/react";
+import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import React, { useEffect, useState } from "react";
-import { Button, Card, CardBody, CardHeader, ButtonGroup } from "@heroui/react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  ButtonGroup,
+  CircularProgress,
+} from "@heroui/react";
 import { genJWT, updateDoc } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 
@@ -42,21 +43,13 @@ declare module "@tiptap/core" {
   }
 }
 
-//Fonts:
-//import FontFamily from '@tiptap/extension-font-family'; //fonts are not working -----------------------Commented out - J
-import Document from "@tiptap/extension-document";
-import Paragraph from "@tiptap/extension-paragraph";
-import Text from "@tiptap/extension-text";
 import ColorLensIcon from "@mui/icons-material/ColorLens";
 
 import Collaboration from "@tiptap/extension-collaboration";
 import * as Y from "yjs";
 import { TiptapCollabProvider } from "@hocuspocus/provider";
-import { WebrtcProvider } from "y-webrtc";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
 import FontFamily from "@tiptap/extension-font-family";
-
-import { useSession } from "next-auth/react";
 
 const editorProps = {
   attributes: {
@@ -65,13 +58,6 @@ const editorProps = {
   },
 };
 const doc = new Y.Doc(); // Initialize Y.Doc for shared editing
-
-/*
-const provider = new WebrtcProvider(
-  "tiptap-collaboration-cursor-extension",
-  doc
-);
-*/
 
 const MenuBar = (props: { name: string; editor: any }) => {
   if (!props.editor) {
@@ -383,21 +369,24 @@ const MenuBar = (props: { name: string; editor: any }) => {
 };
 
 export default (props: any) => {
+  const [loading, setLoading] = useState(true);
+
   let provider = new TiptapCollabProvider({
     name: `${props.name + "-" + props.id}`, // Unique document identifier for syncing. This is your document name.
     appId: process.env.NEXT_PUBLIC_APPID || "", // Your Cloud Dashboard AppID or `baseURL` for on-premises
     token: props.jwt,
     document: doc,
-    preserveConnection: true,
+    preserveConnection: false,
     user: `${props.session?.user?.name}`,
+    broadcast: true,
     // The onSynced callback ensures initial content is set only once using editor.setContent(), preventing repetitive content loading on editor syncs.
     onSynced(editor: any) {
-      setEditorContent(props.content);
+      setLoading(false);
+      //setEditorContent(props.content);
     },
   });
 
   const extensions = [
-    TextStyle,
     Collaboration.configure({
       document: doc, // Configure Y.Doc for collaboration
     }),
@@ -408,11 +397,9 @@ export default (props: any) => {
         color: "#77BA99",
       },
     }),
-
     FontFamily,
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
-    //TextStyle.configure({ types: [ListItem.name] }),
-
+    TextStyle,
     StarterKit.configure({
       history: false,
       bulletList: {
@@ -425,19 +412,16 @@ export default (props: any) => {
       },
     }),
   ];
+
   const editor = useEditor({
     extensions: extensions,
     editorProps: editorProps,
     injectCSS: true,
-    autofocus: true,
-
     onUpdate(props: any) {
       UpdateBoard(props.editor.getHTML());
       //setEditorContent(props.editor.getHTML());
     },
   });
-
-  const [editorContent, setEditorContent] = React.useState<any>("");
 
   const UpdateBoard = useDebouncedCallback(async (content: any) => {
     let updatedBoard = await updateDoc(props.id, content);
@@ -445,12 +429,17 @@ export default (props: any) => {
 
   return (
     <>
-      <MenuBar name={props.name} editor={editor} />
-
-      <EditorContent
-        className={"bg-neutral-900 rounded-md py-5 "}
-        editor={editor}
-      />
+      {loading ? (
+        <CircularProgress className="justify-self-center" />
+      ) : (
+        <>
+          <MenuBar name={props.name} editor={editor} />
+          <EditorContent
+            className={"bg-neutral-900 rounded-md py-5 "}
+            editor={editor}
+          />
+        </>
+      )}
     </>
   );
 };
