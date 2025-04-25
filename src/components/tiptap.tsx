@@ -8,10 +8,10 @@ import { updateDoc } from "@/app/actions/actions";
 import { useDebouncedCallback } from "use-debounce";
 // This allows font family to work
 import "@tiptap/core";
-import MenuBar from "@/components/MenuBar";
+import MenuBar from "@/components/MenuBar.js";
 
 import { CircularProgress } from "@heroui/react";
-import { extensions } from "./extensions";
+import { extensions } from "@/components/extensions";
 
 const editorProps = {
   attributes: {

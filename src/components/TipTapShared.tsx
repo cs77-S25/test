@@ -10,8 +10,8 @@ import { TiptapCollabProvider } from "@hocuspocus/provider";
 
 // This allows font family to work
 import "@tiptap/core";
-import MenuBar from "@/components/MenuBar";
-import { extensions } from "./extensions";
+import MenuBar from "@/components/MenuBar.js";
+import { extensions } from "@/components/extensions";
 
 const editorProps = {
   attributes: {
