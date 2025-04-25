@@ -1,21 +1,7 @@
-import { Sidebar } from "@/components/sidebar";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardFooter,
-  CardHeader,
-  Input,
-} from "@heroui/react";
-import { DocCard } from "@/components/doc-card";
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 import { genJWT, getDocByID } from "@/app/actions/actions";
-import useSWR from "swr";
-import { Docs } from "@prisma/client";
 import Tiptap from "@/components/tiptap";
 import TipTapShared from "@/components/TipTapShared";
-import { theDocs } from "@/lib/types";
-import { useSession } from "next-auth/react";
 import { auth } from "@/app/auth";
 
 export default async function IndexPage({

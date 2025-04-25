@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap");
 /* Basic editor styles */
 .tiptap {
   :first-child {
@@ -53,23 +54,18 @@
   }
 
   /* Code and preformatted text styles */
-  code {
-    background-color: var(--purple-light);
-    border-radius: 0.4rem;
-    color: var(--black);
-    font-size: 0.85rem;
-    padding: 0.25em 0.3em;
-  }
 
   pre {
-    background: var(--black);
+    background: gray;
     border-radius: 0.5rem;
     color: var(--white);
-    font-family: "JetBrainsMono", monospace;
+
+    font-family: "JetBrains Mono", monospace !important;
     margin: 1.5rem 0;
     padding: 0.75rem 1rem;
 
     code {
+      font-family: "JetBrains Mono", monospace !important;
       background: none;
       color: inherit;
       font-size: 0.8rem;
