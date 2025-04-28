@@ -17,7 +17,7 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik"
         - "traefik.http.routers.ascribe.entrypoints=https"
-        - "traefik.http.routers.ascribe.rule=Host(`ascribe.sccs.swarthmore.edu`)"
+        - "traefik.http.routers.ascribe.rule=Host(`ascribe.sccs.swarthmore.edu`) && !PathPrefix('/studio')"
         - "traefik.http.routers.ascribe.tls=true"
         - "traefik.http.routers.ascribe.tls.certresolver=letsEncrypt"
         - "traefik.http.services.ascribe.loadbalancer.server.port=3000"
@@ -26,6 +26,15 @@ services:
       - internal
     command: sh -c "sleep 5 && npx prisma migrate deploy && npm start"
 
+  ascribe-server:
+    container_name: ascribe-server
+    build:
+      context: .
+      dockerfile: ./Dockerfile.server
+    env_file:
+      - .env
+    networks:
+      - internal
   ascribe-db:
     image: postgres:16.4-bullseye
     restart: always
@@ -40,6 +49,29 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  ascribe-studio:
+    container_name: ascribe-studio
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - ascribe-db
+    deploy:
+      labels:
+        - "traefik.enable=true"
+        - "traefik.docker.network=traefik"
+        - "traefik.http.routers.ascribestudio.entrypoints=https"
+        - "traefik.http.routers.ascribestudio.rule=Host(`ascribe.sccs.swarthmore.edu`) && PathPrefix('/studio')"
+        - "traefik.http.routers.ascribestudio.tls=true"
+        - "traefik.http.routers.ascribestudio.tls.certresolver=letsEncrypt"
+        - "traefik.http.services.ascribestudio.loadbalancer.server.port=5555"
+    networks:
+      - internal
+      - traefik
+    command: sh -c "sleep 10 && npx prisma studio"
 
 volumes:
   pg_data:

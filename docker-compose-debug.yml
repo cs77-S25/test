@@ -49,6 +49,20 @@ services:
       - internal
     command: sh -c "sleep 10 && npx prisma studio"
 
+  ascribe-dev-server:
+    container_name: ascribe-dev-server
+    build:
+      context: .
+      dockerfile: ./Dockerfile.server
+    environment:
+      DATABASE_URL: postgresql://postgres:example@ascribe-db-dev:5432/ascribe_db
+    env_file:
+      - .env.local
+    ports:
+      - 5556:5556
+    networks:
+      - internal
+
   ascribe-db-dev:
     container_name: ascribe-db-dev
     image: postgres:16.4-bullseye
