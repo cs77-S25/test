@@ -13,7 +13,6 @@ export const extensions = [
   FontFamily,
   TextStyle,
   Underline,
-  CodeBlock,
   //FontFamily, ------------------------------------------------------------ Commented Out - J
   Color.configure({ types: [TextStyle.name, ListItem.name] }),
   //TextStyle.configure({ types: [ListItem.name] }),
