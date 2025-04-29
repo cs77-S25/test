@@ -57,6 +57,8 @@ services:
       - .env
     depends_on:
       - ascribe-db
+    environment:
+      DOMAIN: http://0.0.0.0:5555/
     deploy:
       labels:
         - "traefik.enable=true"
