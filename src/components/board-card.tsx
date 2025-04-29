@@ -108,6 +108,7 @@ export const BoardCard = (props: any) => {
               selectedKeys={selectedKeys}
               selectionMode="multiple"
               variant="flat"
+              className="max-h-20 overflow-y-scroll"
               onSelectionChange={setSelectedKeys}
             >
               <>

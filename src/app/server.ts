@@ -1,13 +1,12 @@
 import { Server } from "@hocuspocus/server";
 import { Database } from "@hocuspocus/extension-database";
-import { TiptapTransformer } from "@hocuspocus/transformer";
 
 //@ts-ignore
 import prisma from "./lib/prisma.ts";
 
 const server = Server.configure({
   name: "ascribe-server",
-  port: 5556,
+  port: 5557,
   quiet: false,
   extensions: [
     new Database({
@@ -27,8 +26,9 @@ const server = Server.configure({
 
             const buffer = Buffer.from(doc.text, "base64"); // decode base64 back
             const uint8Array = new Uint8Array(buffer);
-
+            console.log("gettingDocument");
             resolve(uint8Array);
+            return;
           } catch (error) {
             console.error("Error in fetch:", error);
             reject(error);

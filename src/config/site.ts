@@ -12,10 +12,6 @@ export const siteConfig = {
       label: "My Boards",
       href: "/board",
     },
-    {
-      label: "Login",
-      href: "/login",
-    },
   ],
 
   links: {

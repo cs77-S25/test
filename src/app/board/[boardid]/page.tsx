@@ -19,6 +19,7 @@ import {
   useDisclosure,
 } from "@heroui/react";
 import { DocCard } from "@/components/doc-card";
+import { marked } from "marked";
 
 import React, { useCallback, useEffect } from "react";
 import { calcStats, createDoc, getBoardByID } from "@/app/actions/actions";
@@ -80,12 +81,12 @@ export default function IndexPage({
 
   return (
     <>
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
         <ModalContent>
           {(onClose) => (
             <>
               {stats == undefined ? (
-                <ModalBody className="ml-auto mr-auto">
+                <ModalBody className="ml-auto mr-auto]">
                   <CircularProgress
                     className="justify-items-center"
                     aria-label="Loading..."
@@ -99,7 +100,7 @@ export default function IndexPage({
                   </ModalHeader>
                   <ModalBody>
                     SUMMARY:
-                    <div> {stats?.summary}</div>
+                    <div>{stats?.summary}</div>
                     <div>
                       WORDCLOUD:
                       <div className="grid grid-cols-5 gap-5 justify-items-center mt-5">

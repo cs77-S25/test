@@ -3,7 +3,7 @@ FROM node:lts-bullseye
 WORKDIR /usr/src/app
 
 COPY . .
-EXPOSE 5556
+EXPOSE 5557
 
 RUN chown -R node /usr/src/app
 USER node

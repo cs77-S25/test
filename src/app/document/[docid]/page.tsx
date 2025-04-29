@@ -12,7 +12,7 @@ export default async function IndexPage({
   const slug = await params;
 
   const document = await getDocByID(parseInt(slug.docid));
-  let jwt = await genJWT();
+
   const session = await auth();
 
   return (
@@ -21,18 +21,12 @@ export default async function IndexPage({
         {document != null ? (
           document?.shared_access.length > 0 ? (
             <TipTapShared
-              content={document?.text}
               id={document.id}
               name={document?.name}
-              jwt={jwt}
               session={session}
             ></TipTapShared>
           ) : (
-            <Tiptap
-              content={document?.text}
-              id={document.id}
-              name={document?.name}
-            />
+            <Tiptap id={document.id} name={document?.name} session={session} />
           )
         ) : null}
       </div>

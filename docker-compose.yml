@@ -17,7 +17,7 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=traefik"
         - "traefik.http.routers.ascribe.entrypoints=https"
-        - "traefik.http.routers.ascribe.rule=Host(`ascribe.sccs.swarthmore.edu`) && !PathPrefix(`/studio`)"
+        - "traefik.http.routers.ascribe.rule=Host(`ascribe.sccs.swarthmore.edu`)"
         - "traefik.http.routers.ascribe.tls=true"
         - "traefik.http.routers.ascribe.tls.certresolver=letsEncrypt"
         - "traefik.http.services.ascribe.loadbalancer.server.port=3000"
@@ -46,16 +46,13 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready --dbname lists --username lists"]
+      test: ["CMD-SHELL", "pg_isready --dbname ascribe_db --username postgres"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   ascribe-studio:
-    image: registry.sccs.swarthmore.edu/cs77-s25/ascribe/ascribe:studio
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: registry.sccs.swarthmore.edu/cs77-s25/ascribe/ascribe:latest
     env_file:
       - .env
     depends_on:
@@ -72,7 +69,7 @@ services:
     networks:
       - internal
       - traefik
-    command: sh -c "sleep 10 && npx prisma studio"
+    command: sh -c "sleep 10 && npx prisma studio --hostname 0.0.0.0"
 
 volumes:
   pg_data:

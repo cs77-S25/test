@@ -25,6 +25,9 @@ export async function GET(request: NextRequest) {
               id: user?.id,
             },
           },
+          include: {
+            shared_access: true,
+          },
         });
       }
     }

@@ -3,9 +3,6 @@ import "@/styles/tiptap.css";
 import { useEditor, EditorContent } from "@tiptap/react";
 import React, { useState } from "react";
 import { CircularProgress } from "@heroui/react";
-import { updateDoc } from "@/app/actions/actions";
-import { useDebouncedCallback } from "use-debounce";
-import * as Y from "yjs";
 import { HocuspocusProvider, TiptapCollabProvider } from "@hocuspocus/provider";
 import CodeBlock from "@tiptap/extension-code-block";
 import Underline from "@tiptap/extension-underline";
@@ -16,6 +13,7 @@ import ListItem from "@tiptap/extension-list-item";
 import CharacterCount from "@tiptap/extension-character-count";
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCursor from "@tiptap/extension-collaboration-cursor";
+import TextAlign from "@tiptap/extension-text-align";
 
 import "@tiptap/core";
 
@@ -24,9 +22,6 @@ import FontFamily from "@tiptap/extension-font-family"; //fonts are not working 
 // This allows font family to work
 import "@tiptap/core";
 import MenuBar from "@/components/MenuBar.js";
-import { extensions } from "@/components/extensions";
-import { useSession } from "next-auth/react";
-import { WebrtcProvider } from "y-webrtc";
 
 const editorProps = {
   attributes: {
@@ -34,17 +29,12 @@ const editorProps = {
       "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none h-[65vh]  overflow-y-scroll",
   },
 };
-//const doc = new Y.Doc(); // Initialize Y.Doc for shared editing
 
 export default (props: any) => {
-  const session = useSession();
   const [loading, setLoading] = useState(true);
-  const UpdateBoard = useDebouncedCallback(async (content: any) => {
-    let updatedBoard = await updateDoc(props.id, content);
-  }, 100);
 
   const provider = new HocuspocusProvider({
-    url: "ws://127.0.0.1:5556",
+    url: "ws://127.0.0.1:5557",
     name: `${props.id}`,
   });
   /*
@@ -69,6 +59,7 @@ export default (props: any) => {
     // onContentError: ({ disableCollaboration }) => {
     //  disableCollaboration();
     //},
+
     onCreate: ({ editor: currentEditor }) => {
       provider.on("synced", () => {
         setLoading(false);
@@ -78,8 +69,15 @@ export default (props: any) => {
       FontFamily,
       Underline,
       Color.configure({ types: [TextStyle.name, ListItem.name] }),
+
+      TextAlign.configure({
+        types: ["heading", "paragraph"],
+      }),
       TextStyle.configure({ mergeNestedSpanStyles: true }),
       StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3, 4],
+        },
         history: false,
         bulletList: {
           keepMarks: true,
@@ -117,13 +115,14 @@ export default (props: any) => {
       ) : (
         <>
           <MenuBar name={props.name} editor={editor} />
-          <div>
-            character-count {editor?.storage.characterCount.characters()}
-          </div>
+
           <EditorContent
-            className={"dark:bg-neutral-900 bg-slate-50 rounded-md py-5 "}
+            className={"dark:bg-neutral-900 bg-slate-50 rounded-md mt-5 "}
             editor={editor}
           />
+          <div className="absolute bottom-5 right-14">
+            {editor?.storage.characterCount.words()}
+          </div>
         </>
       )}
     </>

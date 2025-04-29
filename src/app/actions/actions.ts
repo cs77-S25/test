@@ -91,6 +91,50 @@ export async function removeBoardShare(newUsers: User, boardId: any) {
   }
 }
 
+export async function setDocShare(newUsers: User, boardId: any) {
+  let updatedBoard = await prisma.docs.update({
+    where: {
+      id: boardId,
+    },
+    include: { shared_access: true },
+    data: {
+      shared_access: { connect: { id: newUsers.id } },
+    },
+  });
+  if (updatedBoard) {
+    let updatedDoc = await prisma.board.update({
+      where: {
+        id: updatedBoard.boardid,
+      },
+      data: {
+        shared_access: { connect: { id: newUsers.id } },
+      },
+    });
+  }
+}
+
+export async function removeDocShare(newUsers: User, boardId: any) {
+  let updatedBoard = await prisma.docs.update({
+    where: {
+      id: boardId,
+    },
+    include: { shared_access: true },
+    data: {
+      shared_access: { disconnect: { id: newUsers.id } },
+    },
+  });
+  if (updatedBoard) {
+    let updatedDoc = await prisma.board.update({
+      where: {
+        id: updatedBoard.boardid,
+      },
+      data: {
+        shared_access: { disconnect: { id: newUsers.id } },
+      },
+    });
+  }
+}
+
 export async function checkUserExists(session: any) {
   if (session?.user) {
     console.log("authenticated Proceeding with User check...");
@@ -321,6 +365,14 @@ export async function calcStats(id: number | undefined) {
       for (const doc of board.docs) {
         text = text + " " + doc.text?.replace(/<\/?[^>]+(>|$)/g, "");
       }
+
+      for (const doc of board.docs) {
+        if (doc.text) {
+          const buffer = Buffer.from(doc.text, "base64"); // decode base64 back
+          const readableString = buffer.toString("utf-8");
+          text = text + "=======" + readableString.replace(/[^\x20-\x7E]/g, "");
+        }
+      }
     }
 
     if (text != "") {
@@ -328,7 +380,8 @@ export async function calcStats(id: number | undefined) {
         model: "gemini-2.0-flash",
         contents: text,
         config: {
-          systemInstruction: "Summarize the following text in 50 words.",
+          systemInstruction:
+            "Each block of text separated by ======= is a seperate document. Provide a summary of each document in 30 words max per document. DONT USE MARKDOWN",
         },
       });
       response2 = await client.models.generateContent({
@@ -336,7 +389,7 @@ export async function calcStats(id: number | undefined) {
         contents: text,
         config: {
           systemInstruction:
-            "Find the 10 most occuring words in the following text and reply with only those words, in descending order by frequency, separated by only a comma",
+            "Find the 10 most important and inclusive words used to describe all of the documents, separated by only a comma",
         },
       });
       /* CHAT - if you have credits then go for it

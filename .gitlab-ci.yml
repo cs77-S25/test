@@ -16,7 +16,7 @@ default:
 build:
   stage: build
   script:
-    - docker compose -f docker-compose.yml build ascribe ascribe-server ascribe-studio
+    - docker compose -f docker-compose.yml build ascribe ascribe-server ascribe-studio ascribe-db
     - docker push $SCCS_REGISTRY/cs77-s25/$PROJECT_NAME/ascribe:latest
     - docker push $SCCS_REGISTRY/cs77-s25/$PROJECT_NAME/ascribe:studio
     - docker push $SCCS_REGISTRY/cs77-s25/$PROJECT_NAME/ascribe:server

@@ -59,7 +59,7 @@ services:
     env_file:
       - .env.local
     ports:
-      - 5556:5556
+      - 5557:5557
     networks:
       - internal
 
