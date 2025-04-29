@@ -44,7 +44,7 @@ services:
     networks:
       - internal
     volumes:
-      - pg_data:/var/lib/postgresql/data
+      - ascribe-dbdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready --dbname ascribe_db --username postgres"]
       interval: 10s
@@ -72,7 +72,12 @@ services:
     command: sh -c "sleep 10 && npx prisma studio --hostname 0.0.0.0"
 
 volumes:
-  pg_data:
+  ascribe-dbdata:
+    name: ascribe-dbdata
+    driver_opts:
+      type: nfs
+      o: "nfsvers=4,addr=130.58.218.26,rw,nolock,soft"
+      device: ":/volumes/ascribe-dbdata"
 
 networks:
   internal:
